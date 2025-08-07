@@ -10,8 +10,14 @@ import { ConfirmDeleteModal } from '@/components/modals/ConfirmDeleteModal'
 import { notifications } from '@mantine/notifications'
 import { colors } from '@/theme/theme'
 import { EmployeeProfileModal } from '@/components/modals/EmployeeProfileModal'
+import { Drawer } from '@mantine/core'
+import LevelBar from './LevelBar'
 
 function Employees() {
+  const [
+    levelDrawerOpened,
+    { open: openLevelDrawer, close: closeLevelDrawer },
+  ] = useDisclosure(false)
   const [
     addNewEmployeeModalOpened,
     { open: openAddNewEmployeeModal, close: closeAddNewEmployeeModal },
@@ -79,7 +85,11 @@ function Employees() {
     <div className="">
       <div className="flex justify-end items-center gap-3 w-full mb-12">
         <AppButton onClick={openAddNewEmployeeModal}>Add Employee</AppButton>
-        <AppButton variant="outline" leftSection={<></>} onClick={() => {}}>
+        <AppButton
+          variant="outline"
+          leftSection={<></>}
+          onClick={openLevelDrawer}
+        >
           Manage Level
         </AppButton>
       </div>
@@ -113,6 +123,15 @@ function Employees() {
         onClose={closeAddNewEmployeeModal}
         employeeToEdit={employeeToEdit}
       />
+
+      <Drawer
+        opened={levelDrawerOpened}
+        onClose={closeLevelDrawer}
+        title="Level Management"
+        position="right"
+      >
+        <LevelBar />
+      </Drawer>
 
       <EmployeeProfileModal
         employee={selectedEmployee}
