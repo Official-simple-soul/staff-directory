@@ -1,15 +1,44 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap');
+@import 'tailwindcss';
+
+:root {
+  /* App Colors */
+  --color-background: #f8f9fa;
+  --color-layout: #efedf3;
+  --color-text: #212529;
+  --color-primary: #6264a7;
+  --color-secondary: #464775;
+  --color-success: #198754;
+  --color-danger: #dc3545;
+  --color-warning: #ffc107;
+  --color-info: #6c757d;
+  --color-info-light: #eeeeee;
+
+  /* App Radius */
+  --app-radius: 0.5rem;
+}
+
+@theme inline {
+  --color-background: var(--color-background);
+  --color-layout: var(--color-layout);
+  --color-text: var(--color-text);
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
+  --color-success: var(--color-success);
+  --color-danger: var(--color-danger);
+  --color-warning: var(--color-warning);
+  --color-info: var(--color-info);
+  --color-info-light: var(--color-info-light);
+
+  --radius-app-radius: var(--app-radius);
+}
+
+* {
+  font-family: 'Roboto Slab', serif;
+}
 
 body {
   @apply m-0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
 }
