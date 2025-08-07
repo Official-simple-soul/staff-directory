@@ -64,9 +64,9 @@ export function CreateAndUpdateEmployeeModal({
         role: employeeToEdit.role,
         department: employeeToEdit.department,
         gradeLevelId: employeeToEdit.gradeLevelId || '',
-        address: employeeToEdit.address,
-        state: employeeToEdit.state,
         country: employeeToEdit.country,
+        state: employeeToEdit.state,
+        address: employeeToEdit.address,
         status: employeeToEdit.status,
       })
     } else {
@@ -74,9 +74,11 @@ export function CreateAndUpdateEmployeeModal({
     }
   }, [employeeToEdit])
 
-  // Reset state when country changes
   useEffect(() => {
-    if (form.values.country) {
+    if (
+      form.values.country &&
+      (!employeeToEdit || form.values.country !== employeeToEdit.country)
+    ) {
       form.setFieldValue('state', '')
     }
   }, [form.values.country])

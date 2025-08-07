@@ -10,7 +10,7 @@ import type { CreateGradeLevel, UpdateGradeLevel } from '@/types/level.type'
 import { Box, Stack, Text, TextInput, Loader } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
-import { IconBox } from '@tabler/icons-react'
+import { IconAward } from '@tabler/icons-react'
 import { useState } from 'react'
 
 function LevelBar() {
@@ -135,7 +135,7 @@ function LevelBar() {
                 title={e.level_name}
                 subtitle={e.level_abbreviation}
                 subtitleColor={colors.info}
-                icon={<IconBox size={18} color={colors.primary} />}
+                icon={<IconAward size={24} color={colors.primary} />}
                 rightSection={
                   <RightActionButtons
                     onEdit={() => handleEdit(e)}

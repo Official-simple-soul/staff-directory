@@ -107,12 +107,9 @@ export function EmployeeProfileModal({
           icon={<IconMapPin size={16} color={colors.primary} />}
           label="Address"
           value={
-            <>
-              <Text size="sm">{employee.address}</Text>
-              <Text size="sm">
-                {employee.state}, {employee.country}
-              </Text>
-            </>
+            <Text size="sm">
+              {employee.address}, {employee.state}, {employee.country}
+            </Text>
           }
         />
 
