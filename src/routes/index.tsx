@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import DashboardLayout from '@/layout/DashboardLayout'
+import Employees from '@/pages/employee/Employees'
 
 export const Route = createFileRoute('/')({
   component: App,
@@ -8,7 +9,7 @@ export const Route = createFileRoute('/')({
 function App() {
   return (
     <DashboardLayout>
-      <p>Index</p>
+      <Employees />
     </DashboardLayout>
   )
 }
