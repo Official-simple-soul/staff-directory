@@ -49,7 +49,7 @@ function Employees() {
     }
 
     return result
-  }, [employees, debouncedSearchTerm])
+  }, [employees, debouncedSearchTerm, selectedLevelIds])
 
   const handleSearchChange = useCallback((term: string) => {
     setSearchTerm(term)
