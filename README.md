@@ -4,7 +4,7 @@ A modern staff management application built with cutting-edge technologies for e
 
 ## 🚀 Tech Stack
 
-- **Frontend Framework**: [React](https://react.dev/) (Vite)
+- **Frontend Framework**: [React](https://react.dev/) (Vite) (Tanstack)
 - **UI Components**: [Mantine UI](https://mantine.dev/)
 - **Routing**: [TanStack Router](https://tanstack.com/router)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/) + [Mantine](https://mantine.dev/)
@@ -36,7 +36,7 @@ A modern staff management application built with cutting-edge technologies for e
 
 ```bash
 # Clone the repository
-git clone [repository-url]
+git clone https://github.com/Official-simple-soul/staff-directory.git
 
 # Navigate to project directory
 cd staff-directory
@@ -51,13 +51,13 @@ pnpm exec playwright install
 ### Running the Application
 
 ```bash
-# Clone the repository
+# Start development server
 pnpm start
 
-# Navigate to project directory
+# Build for production
 pnpm build
 
-# Install dependencies
+# Preview production build
 pnpm server
 ```
 
