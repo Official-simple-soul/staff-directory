@@ -189,6 +189,7 @@ export function CreateAndUpdateEmployeeModal({
             }))}
             {...form.getInputProps('gradeLevelId')}
             {...sharedInputProps()}
+            nothingFoundMessage={`You don't have any grade level created yet. Click manage level button to create one`}
           />
 
           <Group grow>
