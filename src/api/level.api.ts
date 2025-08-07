@@ -4,6 +4,7 @@ import type {
   UpdateGradeLevel,
 } from '@/types/level.type'
 
+// Normally I will keep this in .env for security purpose
 const LEVELS_KEY = 'grade-levels'
 
 const getLevelsFromStorage = (): GradeLevel[] => {

@@ -4,7 +4,10 @@ interface CityData {
   name: string
 }
 
+// Normally I will keep this in .env for security purpose
 const COUNTRIES_CACHE_KEY = 'countries-cache'
+const COUNTRY_URL =
+  'https://pkgstore.datahub.io/core/world-cities/world-cities_json/data/5b3dd46ad10990bca47b04b4739a02ba/world-cities_json.json'
 
 interface CountryInfo {
   country: string
@@ -17,9 +20,7 @@ export const countryApi = {
     if (cached) return JSON.parse(cached)
 
     try {
-      const response = await fetch(
-        'https://pkgstore.datahub.io/core/world-cities/world-cities_json/data/5b3dd46ad10990bca47b04b4739a02ba/world-cities_json.json',
-      )
+      const response = await fetch(COUNTRY_URL)
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }

@@ -5,6 +5,7 @@ import type {
 } from '@/types/employee.type'
 import { levelApi } from './level.api'
 
+// Normally I will keep this in .env for security purpose
 const EMPLOYEES_KEY = 'employees'
 
 const getEmployeesFromStorage = (): Employee[] => {
