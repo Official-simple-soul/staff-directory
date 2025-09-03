@@ -82,7 +82,7 @@ const UPLOAD_STEPS = [
   },
   {
     label: 'Additional Details',
-    icon: <IconDetails size={16} />,
+    icon: <IconInfoCircle size={16} />,
     description: 'Add duration, status, and and preview',
   },
   {
