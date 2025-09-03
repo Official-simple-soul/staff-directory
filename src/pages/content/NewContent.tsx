@@ -34,7 +34,6 @@ import {
   IconSparkles,
   IconPlus,
   IconCheck,
-  IconDetails,
 } from '@tabler/icons-react'
 import type { Content } from '@/types/content.type'
 import { DatePicker } from '@mantine/dates'
