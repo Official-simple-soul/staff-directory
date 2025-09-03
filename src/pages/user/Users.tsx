@@ -43,7 +43,7 @@ export const UsersPage: React.FC = () => {
   const [userType, setUserType] = useState<
     'all' | 'active' | 'inactive' | 'admin'
   >('all')
-  const { users, error, isLoading, deleteUser, isDeleting } = useUser()
+  const { users, error, isLoading, isDeleting } = useUser()
   const [userIdToDelete, setUserIdToDelete] = useState<string | null>(null)
   const navigate = useNavigate()
 

@@ -30,24 +30,12 @@ interface UserCardProps {
   onView: (user: User) => void
 }
 
-const active = (user: User): boolean => {
-  const lastLoginDate = safeToDate(user.lastLogin)
-  if (!lastLoginDate) return false
-
-  const thirtyDaysAgo = new Date()
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-
-  return lastLoginDate.getTime() > thirtyDaysAgo.getTime()
-}
-
 const UserCard: React.FC<UserCardProps> = ({
   user,
   onEdit,
   onDelete,
   onView,
 }) => {
-  const isActive = active(user)
-
   const getPackageColor = (packageSub: string) => {
     switch (packageSub?.toLowerCase()) {
       case 'premium':

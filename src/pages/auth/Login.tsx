@@ -4,7 +4,6 @@ import {
   Paper,
   TextInput,
   PasswordInput,
-  Button,
   Text,
   Group,
   Center,
@@ -19,7 +18,7 @@ import { notifications } from '@mantine/notifications'
 import { auth } from '@/lib/firebase'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { useUser } from '@/services/user.service'
-import { colors, radius } from '@/theme/theme'
+import { radius } from '@/theme/theme'
 import { sharedInputProps } from '@/constant/ui'
 import { AppButton } from '@/components/AppButton'
 
@@ -52,12 +51,7 @@ export function LoginScreen() {
 
     try {
       // Sign in with Firebase Auth
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        values.email,
-        values.password,
-      )
-      const firebaseUser = userCredential.user
+      await signInWithEmailAndPassword(auth, values.email, values.password)
 
       // Check if user has admin role in Firestore
       const userData = await getUserByEmail(values.email)
