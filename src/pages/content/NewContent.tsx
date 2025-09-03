@@ -34,6 +34,7 @@ import {
   IconSparkles,
   IconPlus,
   IconCheck,
+  IconDetails,
 } from '@tabler/icons-react'
 import type { Content } from '@/types/content.type'
 import { DatePicker } from '@mantine/dates'
@@ -71,12 +72,18 @@ const UPLOAD_STEPS = [
   {
     label: 'Basic Info',
     icon: <IconInfoCircle size={16} />,
-    description: 'Add title, author, and basic information',
+    description: 'Add title, package, and tag line',
   },
   {
     label: 'Content Details',
     icon: <IconBook size={16} />,
-    description: 'Set genres, collection, and content details',
+    description:
+      'Select a collection to auto-fill author, collection number, and genre.',
+  },
+  {
+    label: 'Additional Details',
+    icon: <IconDetails size={16} />,
+    description: 'Add duration, status, and and preview',
   },
   {
     label: 'Media Upload',
@@ -425,7 +432,7 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
               />
 
               <Grid>
-                <Grid.Col span={6}>
+                <Grid.Col span={{ base: 12, sm: 6 }}>
                   <Select
                     label="Collection"
                     placeholder="Select a collection"
@@ -434,6 +441,7 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
                       value: col.id!,
                       label: col.name,
                     }))}
+                    description="If this is a new comic starting from Issue #1, create a new collection."
                     searchable
                     {...form.getInputProps('collectionId')}
                     onChange={(value) => {
@@ -452,7 +460,7 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
                     </p>
                   </div>
                 </Grid.Col>
-                <Grid.Col span={6}>
+                <Grid.Col span={{ base: 12, sm: 6 }}>
                   <TextInput
                     label="Author"
                     placeholder="Content author"
@@ -460,12 +468,13 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
                     {...form.getInputProps('author')}
                     {...sharedInputProps()}
                     readOnly
+                    description="This will be automatically populated based on the selected collection"
                   />
                 </Grid.Col>
               </Grid>
 
               <Grid>
-                <Grid.Col span={6}>
+                <Grid.Col span={{ base: 12, sm: 6 }}>
                   <NumberInput
                     label="Collection Number"
                     placeholder="Sequence in collection"
@@ -474,9 +483,10 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
                     {...form.getInputProps('collectionNum')}
                     {...sharedInputProps()}
                     readOnly
+                    description="This will be automatically populated based on the selected collection"
                   />
                 </Grid.Col>
-                <Grid.Col span={6}>
+                <Grid.Col span={{ base: 12, sm: 6 }}>
                   <MultiSelect
                     label="Genres"
                     placeholder="Select genres"
@@ -486,6 +496,7 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
                     {...form.getInputProps('genre')}
                     {...sharedInputProps()}
                     readOnly
+                    description="This will be automatically populated based on the selected collection"
                   />
                 </Grid.Col>
               </Grid>
