@@ -13,11 +13,21 @@ import { Link } from '@tanstack/react-router'
 import AppLogo from '@/components/AppLogo'
 import { links } from './data/sidebar_data'
 import { colors } from '@/theme/theme'
+import { IconLogout } from '@tabler/icons-react'
+import { signOut } from 'firebase/auth'
+import { auth } from '@/lib/firebase'
+import { useUser } from '@/services/user.service'
 
 const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure()
   const [desktopOpened] = useDisclosure(true)
   const isMobile = useMediaQuery('(max-width: 768px)')
+
+  const { useUserById } = useUser()
+  const userId = auth.currentUser?.uid
+  const userResult = userId ? useUserById(userId) : undefined
+
+  const user = userResult?.data
 
   return (
     <AppShell
@@ -27,7 +37,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
         breakpoint: 'sm',
         collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
       }}
-      padding="lg"
+      padding={{ base: 'md', sm: 'xl' }}
     >
       <AppShell.Header
         p="lg"
@@ -53,6 +63,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
             color={colors.primary}
             size="sm"
             style={{ textTransform: 'uppercase' }}
+            src={user?.photoURL}
           >
             AD
           </Avatar>
@@ -62,7 +73,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
             }}
             className="flex flex-col"
           >
-            <Text size="md">Admin</Text>
+            <Text size="md">{user?.displayName || user?.name}</Text>
           </Box>
         </Group>
       </AppShell.Header>
@@ -81,9 +92,21 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
               className="flex flex-col items-center text-info justify-center gap-1 py-2 mb-3 transition-all ease-in-out font-normal cursor-pointer"
             >
               {link.icon}
-              <p className="text-[10px]">{link.label}</p>
+              <p className="text-[10px] font-bold">{link.label}</p>
             </Link>
           ))}
+        </AppShell.Section>
+        <AppShell.Section>
+          <p
+            className="flex flex-col items-center text-info justify-center gap-1 py-2 mb-3 transition-all ease-in-out font-normal cursor-pointer"
+            onClick={() => {
+              signOut(auth)
+              window.location.href = '/'
+            }}
+          >
+            <IconLogout color={colors.danger} size={20} />
+            <p className="text-[10px] font-bold text-danger">Log Out</p>
+          </p>
         </AppShell.Section>
       </AppShell.Navbar>
       <AppShell.Main bg={colors.background}>{children}</AppShell.Main>

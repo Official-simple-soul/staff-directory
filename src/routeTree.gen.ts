@@ -10,11 +10,43 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UsersIndexRouteImport } from './routes/users/index'
+import { Route as EmployeeIndexRouteImport } from './routes/employee/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as ContentIndexRouteImport } from './routes/content/index'
+import { Route as UsersUserIdRouteImport } from './routes/users/$userId'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo.tanstack-query'
+import { Route as ContentNewContentRouteImport } from './routes/content/new-content'
+import { Route as ContentContentIdRouteImport } from './routes/content/$contentId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UsersIndexRoute = UsersIndexRouteImport.update({
+  id: '/users/',
+  path: '/users/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmployeeIndexRoute = EmployeeIndexRouteImport.update({
+  id: '/employee/',
+  path: '/employee/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContentIndexRoute = ContentIndexRouteImport.update({
+  id: '/content/',
+  path: '/content/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UsersUserIdRoute = UsersUserIdRouteImport.update({
+  id: '/users/$userId',
+  path: '/users/$userId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
@@ -22,31 +54,97 @@ const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
   path: '/demo/tanstack-query',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContentNewContentRoute = ContentNewContentRouteImport.update({
+  id: '/content/new-content',
+  path: '/content/new-content',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContentContentIdRoute = ContentContentIdRouteImport.update({
+  id: '/content/$contentId',
+  path: '/content/$contentId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/content/$contentId': typeof ContentContentIdRoute
+  '/content/new-content': typeof ContentNewContentRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/users/$userId': typeof UsersUserIdRoute
+  '/content': typeof ContentIndexRoute
+  '/dashboard': typeof DashboardIndexRoute
+  '/employee': typeof EmployeeIndexRoute
+  '/users': typeof UsersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/content/$contentId': typeof ContentContentIdRoute
+  '/content/new-content': typeof ContentNewContentRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/users/$userId': typeof UsersUserIdRoute
+  '/content': typeof ContentIndexRoute
+  '/dashboard': typeof DashboardIndexRoute
+  '/employee': typeof EmployeeIndexRoute
+  '/users': typeof UsersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/content/$contentId': typeof ContentContentIdRoute
+  '/content/new-content': typeof ContentNewContentRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/users/$userId': typeof UsersUserIdRoute
+  '/content/': typeof ContentIndexRoute
+  '/dashboard/': typeof DashboardIndexRoute
+  '/employee/': typeof EmployeeIndexRoute
+  '/users/': typeof UsersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/demo/tanstack-query'
+  fullPaths:
+    | '/'
+    | '/content/$contentId'
+    | '/content/new-content'
+    | '/demo/tanstack-query'
+    | '/users/$userId'
+    | '/content'
+    | '/dashboard'
+    | '/employee'
+    | '/users'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/demo/tanstack-query'
-  id: '__root__' | '/' | '/demo/tanstack-query'
+  to:
+    | '/'
+    | '/content/$contentId'
+    | '/content/new-content'
+    | '/demo/tanstack-query'
+    | '/users/$userId'
+    | '/content'
+    | '/dashboard'
+    | '/employee'
+    | '/users'
+  id:
+    | '__root__'
+    | '/'
+    | '/content/$contentId'
+    | '/content/new-content'
+    | '/demo/tanstack-query'
+    | '/users/$userId'
+    | '/content/'
+    | '/dashboard/'
+    | '/employee/'
+    | '/users/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ContentContentIdRoute: typeof ContentContentIdRoute
+  ContentNewContentRoute: typeof ContentNewContentRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
+  UsersUserIdRoute: typeof UsersUserIdRoute
+  ContentIndexRoute: typeof ContentIndexRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+  EmployeeIndexRoute: typeof EmployeeIndexRoute
+  UsersIndexRoute: typeof UsersIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -58,6 +156,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/users/': {
+      id: '/users/'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof UsersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/employee/': {
+      id: '/employee/'
+      path: '/employee'
+      fullPath: '/employee'
+      preLoaderRoute: typeof EmployeeIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/content/': {
+      id: '/content/'
+      path: '/content'
+      fullPath: '/content'
+      preLoaderRoute: typeof ContentIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/users/$userId': {
+      id: '/users/$userId'
+      path: '/users/$userId'
+      fullPath: '/users/$userId'
+      preLoaderRoute: typeof UsersUserIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo/tanstack-query': {
       id: '/demo/tanstack-query'
       path: '/demo/tanstack-query'
@@ -65,12 +198,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoTanstackQueryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/content/new-content': {
+      id: '/content/new-content'
+      path: '/content/new-content'
+      fullPath: '/content/new-content'
+      preLoaderRoute: typeof ContentNewContentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/content/$contentId': {
+      id: '/content/$contentId'
+      path: '/content/$contentId'
+      fullPath: '/content/$contentId'
+      preLoaderRoute: typeof ContentContentIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ContentContentIdRoute: ContentContentIdRoute,
+  ContentNewContentRoute: ContentNewContentRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
+  UsersUserIdRoute: UsersUserIdRoute,
+  ContentIndexRoute: ContentIndexRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+  EmployeeIndexRoute: EmployeeIndexRoute,
+  UsersIndexRoute: UsersIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -53,7 +53,7 @@ export function EmptyState({
       {action && (
         <Box
           style={{
-            marginTop: '24px',
+            marginTop: '14px',
             width: '100%',
             maxWidth: '300px',
           }}

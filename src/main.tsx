@@ -11,6 +11,7 @@ import { routeTree } from './routeTree.gen'
 import './styles.css'
 import '@mantine/core/styles.css'
 import '@mantine/notifications/styles.css'
+import '@mantine/dates/styles.css'
 import reportWebVitals from './reportWebVitals.ts'
 import { MantineProvider } from '@mantine/core'
 

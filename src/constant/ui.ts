@@ -5,7 +5,7 @@ export const sharedInputProps = () => ({
   radius: radius.app,
   size: 'sm',
   styles: {
-    label: { color: '#101828' },
+    label: { color: colors.text },
     option: {
       textTransform: 'capitalize' as CSSProperties['textTransform'],
     },
@@ -17,7 +17,7 @@ export const sharedInputProps = () => ({
 
 export const modalBaseProps = () => ({
   radius: radius.app,
-  padding: 'xl',
+  padding: 'md',
   size: 'sm',
   overlayProps: {
     backgroundOpacity: 0.55,
