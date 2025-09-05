@@ -127,7 +127,7 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
   const [coverImageError, setCoverImageError] = useState<string | null>(null)
   const [mediaFile, setMediaFile] = useState<File | null>(null)
   const { collections, incrementCollectionCount } = useCollection()
-  const { analytics, incrementCount } = useAnalytics()
+  const { analytics, incrementAnalyticsCount } = useAnalytics()
   const { createContent, updateContent } = useContent()
   const [mediaFileError, setMediaFileError] = useState<string | null>(null)
   const [isScheduled, setIsScheduled] = useState(false)
@@ -339,7 +339,7 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
         await Promise.all([
           incrementCollectionCount(values.collectionId),
 
-          incrementCount({ field: 'content', amount: 1 }),
+          incrementAnalyticsCount({ field: 'content', amount: 1 }),
         ])
 
         notifications.show({

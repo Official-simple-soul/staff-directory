@@ -55,7 +55,7 @@ function ViewContent({ contentId }: ViewContentProps) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const { getContentReviews } = useContent()
   const { decrementCollectionCount } = useCollection()
-  const { decrementCount } = useAnalytics()
+  const { decrementAnalyticsCount } = useAnalytics()
   const { deleteContent, isDeleting } = useContent()
   const navigate = useNavigate()
 
@@ -94,7 +94,7 @@ function ViewContent({ contentId }: ViewContentProps) {
       onSuccess: async () => {
         await Promise.all([
           decrementCollectionCount(contentId),
-          decrementCount({ field: 'content', amount: 1 }),
+          decrementAnalyticsCount({ field: 'content', amount: 1 }),
         ])
         navigate({ to: '..' })
       },

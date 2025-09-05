@@ -30,11 +30,13 @@ export const ContentPage: React.FC = () => {
     'all',
   )
   const { decrementCollectionCount } = useCollection()
-  const { decrementCount } = useAnalytics()
+  const { decrementAnalyticsCount } = useAnalytics()
   const { content, error, isLoading, deleteContent, isDeleting } = useContent()
   const [contentIdToDelete, setContentIdToDelete] = useState<string | null>(
     null,
   )
+
+  const navigate = useNavigate()
 
   const handleView = (content: Content) => {
     navigate({ to: `/content/${content.id}` })
@@ -55,14 +57,11 @@ export const ContentPage: React.FC = () => {
 
         await Promise.all([
           decrementCollectionCount(contentIdToDelete),
-
-          decrementCount({ field: 'content', amount: 1 }),
+          decrementAnalyticsCount({ field: 'content', amount: 1 }),
         ])
       },
     })
   }
-
-  const navigate = useNavigate()
 
   const filteredContent =
     contentType === 'all'

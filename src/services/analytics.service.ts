@@ -14,7 +14,7 @@ export const useAnalytics = () => {
     staleTime: 2 * 60 * 1000,
   })
 
-  const incrementCount = useMutation({
+  const incrementAnalyticsCount = useMutation({
     mutationFn: ({
       field,
       amount,
@@ -30,7 +30,7 @@ export const useAnalytics = () => {
     },
   })
 
-  const decrementCount = useMutation({
+  const decrementAnalyticsCount = useMutation({
     mutationFn: ({
       field,
       amount,
@@ -50,7 +50,7 @@ export const useAnalytics = () => {
     analytics,
     isLoading,
     error,
-    incrementCount: incrementCount.mutateAsync,
-    decrementCount: decrementCount.mutateAsync,
+    incrementAnalyticsCount: incrementAnalyticsCount.mutateAsync,
+    decrementAnalyticsCount: decrementAnalyticsCount.mutateAsync,
   }
 }
