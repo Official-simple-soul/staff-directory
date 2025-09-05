@@ -1,11 +1,12 @@
 import { userApi } from '@/api/user.api'
-import { requireAdminAuth } from '@/middleware/auth.middleware'
+import { roles } from '@/config/config'
+import { requireAuth } from '@/middleware/auth.middleware'
 import ViewUser from '@/pages/user/ViewUser'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/users/$userId')({
   loader: async ({ params }) => {
-    const authResult = await requireAdminAuth()
+    const authResult = await requireAuth(roles.singleUser)
     if (authResult.redirect) {
       throw redirect({ to: authResult.redirect })
     }

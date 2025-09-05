@@ -8,7 +8,7 @@ interface PageHeaderProps {
   actionLabel?: string
   onAction?: () => void
   actionIcon?: React.ReactNode
-  back?: boolean
+  page?: string
   loading?: boolean
 }
 
@@ -18,13 +18,13 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   actionLabel,
   onAction,
   actionIcon,
-  back = false,
+  page = null,
   loading = false,
 }) => {
   return (
     <Group justify="space-between" mb="lg">
-      {back ? (
-        <Back />
+      {page ? (
+        <Back page={page} />
       ) : (
         <div>
           <p className="text-text md:text-2xl font-medium">{title}</p>

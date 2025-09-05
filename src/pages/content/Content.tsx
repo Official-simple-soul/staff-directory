@@ -11,7 +11,7 @@ import {
 } from '@mantine/core'
 import { IconList, IconGridDots, IconTrash } from '@tabler/icons-react'
 import type { Content } from '@/types/content.type'
-import ContentCard from './components/CourseCard'
+import ContentCard from './components/ContentCard'
 import ContentList from './components/ContentList'
 import { useNavigate } from '@tanstack/react-router'
 import PageHeader from '@/components/PageHeader'
@@ -22,6 +22,7 @@ import ActionModal from '@/components/modals/ActionModal'
 import { colors } from '@/theme/theme'
 import { useCollection } from '@/services/collection.service'
 import { useAnalytics } from '@/services/analytics.service'
+import DashboardLayout from '@/layout/DashboardLayout'
 
 export const ContentPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('grid')
@@ -77,7 +78,7 @@ export const ContentPage: React.FC = () => {
   }
 
   return (
-    <div className="">
+    <DashboardLayout>
       <PageHeader
         title="Content Library"
         subtitle="Manage all your comics and videos"
@@ -203,6 +204,6 @@ export const ContentPage: React.FC = () => {
           setContentIdToDelete(null)
         }}
       />
-    </div>
+    </DashboardLayout>
   )
 }

@@ -76,8 +76,12 @@ export const useContent = () => {
   }
 
   // Get single content by ID
-  const getContentById = async (id: string): Promise<Content | null> => {
-    return contentApi.getContentById(id)
+  const getContentById = (id: string) => {
+    return useQuery<Content | null>({
+      queryKey: ['content', id],
+      queryFn: () => contentApi.getContentById(id),
+      enabled: !!id,
+    })
   }
 
   // Upload file

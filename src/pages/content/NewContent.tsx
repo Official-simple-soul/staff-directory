@@ -301,8 +301,6 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
         mediaUrl = await uploadFileToStorage(mediaFile, mediaPath)
       }
 
-      console.log('Uploaded URLs:', { imgUrl, mediaUrl })
-
       const contentData = {
         ...values,
         type: contentType,
@@ -328,8 +326,6 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
           uploaded: Timestamp.now(),
         }),
       }
-
-      console.log('Submitting content:', contentData)
 
       if (contentToEdit) {
         await updateContent({
@@ -375,7 +371,7 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <PageHeader
-            back={true}
+            page={'contents'}
             actionLabel={contentToEdit ? 'Update Content' : 'Upload Content'}
             onAction={form.onSubmit(handleSubmit)}
             loading={isLoading}

@@ -20,7 +20,6 @@ import UserCard from './components/UserCard'
 import UserList from './components/UserList'
 import { useNavigate } from '@tanstack/react-router'
 import PageHeader from '@/components/PageHeader'
-import { AppButton } from '@/components/AppButton'
 import { EmptyState } from '@/components/EmptyState'
 import { useUser } from '@/services/user.service'
 import ActionModal from '@/components/modals/ActionModal'
@@ -41,7 +40,7 @@ const isUserActive = (user: User): boolean => {
 export const UsersPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('grid')
   const [userType, setUserType] = useState<
-    'all' | 'active' | 'inactive' | 'admin'
+    'all' | 'active' | 'inactive' | 'admin' | 'moderator'
   >('all')
   const { users, error, isLoading, isDeleting } = useUser()
   const [userIdToDelete, setUserIdToDelete] = useState<string | null>(null)
@@ -68,6 +67,8 @@ export const UsersPage: React.FC = () => {
         return true
       case 'admin':
         return user.role?.toLowerCase() === 'admin'
+      case 'moderator':
+        return user.role?.toLowerCase() === 'moderator'
       case 'active':
         return isUserActive(user)
       case 'inactive':
@@ -101,8 +102,9 @@ export const UsersPage: React.FC = () => {
             }
             data={[
               { label: 'All Users', value: 'all' },
-              { label: 'Active', value: 'active' },
-              { label: 'Inactive', value: 'inactive' },
+              { label: 'Active Users', value: 'active' },
+              { label: 'Inactive Users', value: 'inactive' },
+              { label: 'Moderator', value: 'moderator' },
               { label: 'Admin', value: 'admin' },
             ]}
           />
@@ -181,11 +183,11 @@ export const UsersPage: React.FC = () => {
                 ? `No ${userType} users match your criteria.`
                 : 'Get started by adding your first user.'
             }
-            action={
-              <AppButton onClick={() => navigate({ to: '/users' })}>
-                Add New User
-              </AppButton>
-            }
+            // action={
+            //   <AppButton onClick={() => navigate({ to: '/users' })}>
+            //     Add New User
+            //   </AppButton>
+            // }
           />
         </Center>
       )}

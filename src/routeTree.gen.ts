@@ -14,10 +14,12 @@ import { Route as UsersIndexRouteImport } from './routes/users/index'
 import { Route as EmployeeIndexRouteImport } from './routes/employee/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as ContentIndexRouteImport } from './routes/content/index'
+import { Route as BlogsIndexRouteImport } from './routes/blogs/index'
 import { Route as UsersUserIdRouteImport } from './routes/users/$userId'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo.tanstack-query'
 import { Route as ContentNewContentRouteImport } from './routes/content/new-content'
 import { Route as ContentContentIdRouteImport } from './routes/content/$contentId'
+import { Route as BlogsBlogIdRouteImport } from './routes/blogs/$blogId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -44,6 +46,11 @@ const ContentIndexRoute = ContentIndexRouteImport.update({
   path: '/content/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogsIndexRoute = BlogsIndexRouteImport.update({
+  id: '/blogs/',
+  path: '/blogs/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UsersUserIdRoute = UsersUserIdRouteImport.update({
   id: '/users/$userId',
   path: '/users/$userId',
@@ -64,13 +71,20 @@ const ContentContentIdRoute = ContentContentIdRouteImport.update({
   path: '/content/$contentId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogsBlogIdRoute = BlogsBlogIdRouteImport.update({
+  id: '/blogs/$blogId',
+  path: '/blogs/$blogId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/blogs/$blogId': typeof BlogsBlogIdRoute
   '/content/$contentId': typeof ContentContentIdRoute
   '/content/new-content': typeof ContentNewContentRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/users/$userId': typeof UsersUserIdRoute
+  '/blogs': typeof BlogsIndexRoute
   '/content': typeof ContentIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/employee': typeof EmployeeIndexRoute
@@ -78,10 +92,12 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/blogs/$blogId': typeof BlogsBlogIdRoute
   '/content/$contentId': typeof ContentContentIdRoute
   '/content/new-content': typeof ContentNewContentRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/users/$userId': typeof UsersUserIdRoute
+  '/blogs': typeof BlogsIndexRoute
   '/content': typeof ContentIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/employee': typeof EmployeeIndexRoute
@@ -90,10 +106,12 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/blogs/$blogId': typeof BlogsBlogIdRoute
   '/content/$contentId': typeof ContentContentIdRoute
   '/content/new-content': typeof ContentNewContentRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/users/$userId': typeof UsersUserIdRoute
+  '/blogs/': typeof BlogsIndexRoute
   '/content/': typeof ContentIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/employee/': typeof EmployeeIndexRoute
@@ -103,10 +121,12 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/blogs/$blogId'
     | '/content/$contentId'
     | '/content/new-content'
     | '/demo/tanstack-query'
     | '/users/$userId'
+    | '/blogs'
     | '/content'
     | '/dashboard'
     | '/employee'
@@ -114,10 +134,12 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/blogs/$blogId'
     | '/content/$contentId'
     | '/content/new-content'
     | '/demo/tanstack-query'
     | '/users/$userId'
+    | '/blogs'
     | '/content'
     | '/dashboard'
     | '/employee'
@@ -125,10 +147,12 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/blogs/$blogId'
     | '/content/$contentId'
     | '/content/new-content'
     | '/demo/tanstack-query'
     | '/users/$userId'
+    | '/blogs/'
     | '/content/'
     | '/dashboard/'
     | '/employee/'
@@ -137,10 +161,12 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BlogsBlogIdRoute: typeof BlogsBlogIdRoute
   ContentContentIdRoute: typeof ContentContentIdRoute
   ContentNewContentRoute: typeof ContentNewContentRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   UsersUserIdRoute: typeof UsersUserIdRoute
+  BlogsIndexRoute: typeof BlogsIndexRoute
   ContentIndexRoute: typeof ContentIndexRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   EmployeeIndexRoute: typeof EmployeeIndexRoute
@@ -184,6 +210,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContentIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blogs/': {
+      id: '/blogs/'
+      path: '/blogs'
+      fullPath: '/blogs'
+      preLoaderRoute: typeof BlogsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/users/$userId': {
       id: '/users/$userId'
       path: '/users/$userId'
@@ -212,15 +245,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContentContentIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blogs/$blogId': {
+      id: '/blogs/$blogId'
+      path: '/blogs/$blogId'
+      fullPath: '/blogs/$blogId'
+      preLoaderRoute: typeof BlogsBlogIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BlogsBlogIdRoute: BlogsBlogIdRoute,
   ContentContentIdRoute: ContentContentIdRoute,
   ContentNewContentRoute: ContentNewContentRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   UsersUserIdRoute: UsersUserIdRoute,
+  BlogsIndexRoute: BlogsIndexRoute,
   ContentIndexRoute: ContentIndexRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   EmployeeIndexRoute: EmployeeIndexRoute,

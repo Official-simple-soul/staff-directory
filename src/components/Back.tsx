@@ -1,25 +1,22 @@
 import { IconArrowLeft } from '@tabler/icons-react'
 import { useNavigate } from '@tanstack/react-router'
+import { AppButton } from './AppButton'
 
 interface BackProps {
-  size?: number
-  color?: string
   to?: string
+  page: string
 }
 
-export const Back: React.FC<BackProps> = ({
-  size = 20,
-  color = 'gray',
-  to = '..',
-}) => {
+export const Back: React.FC<BackProps> = ({ to = '..', page }) => {
   const navigate = useNavigate()
 
   return (
-    <IconArrowLeft
-      className="cursor-pointer"
-      size={size}
-      color={color}
+    <AppButton
+      variant="default"
+      leftSection={<IconArrowLeft size={18} />}
       onClick={() => navigate({ to })}
-    />
+    >
+      Back to {page}
+    </AppButton>
   )
 }

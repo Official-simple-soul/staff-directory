@@ -15,6 +15,7 @@ import {
   IconEye,
 } from '@tabler/icons-react'
 import { useAnalytics } from '@/services/analytics.service'
+import { colors } from '@/theme/theme'
 
 const AnalyticsDashboard = () => {
   const { analytics, error, isLoading } = useAnalytics()
@@ -117,7 +118,7 @@ const AnalyticsDashboard = () => {
                       value: completionRate,
                       color:
                         completionRate > 75
-                          ? 'teal'
+                          ? colors.primary
                           : completionRate > 50
                             ? 'yellow'
                             : 'orange',

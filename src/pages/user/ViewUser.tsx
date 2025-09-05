@@ -85,7 +85,7 @@ function ViewUser({ user }: ViewUserProps) {
     <DashboardLayout>
       {/* Header */}
       <Group justify="space-between" mb="xl">
-        <Back />
+        <Back page="users" />
 
         <AppButton
           variant="light"

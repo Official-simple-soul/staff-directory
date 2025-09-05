@@ -16,6 +16,7 @@ import {
   IconBook,
   IconCrown,
   IconFileAnalytics,
+  IconFreeRights,
 } from '@tabler/icons-react'
 import type { Content } from '@/types/content.type'
 import { colors } from '@/theme/theme'
@@ -59,7 +60,13 @@ const ContentCard: React.FC<ContentCardProps> = ({
             color={colors.primary}
             variant="filled"
             className="absolute top-2 right-2 shadow-md! shadow-black"
-            leftSection={<IconCrown size={12} />}
+            leftSection={
+              content.package === 'premium' ? (
+                <IconCrown size={12} />
+              ) : (
+                <IconFreeRights size={12} />
+              )
+            }
             radius={'sm'}
           >
             <p className="text-[10px] capitalize">{content.package}</p>

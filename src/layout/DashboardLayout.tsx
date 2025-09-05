@@ -80,21 +80,23 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
 
       <AppShell.Navbar bg={colors.layout} pt={'xl'}>
         <AppShell.Section grow component={ScrollArea} scrollbarSize={0}>
-          {links.map((link, index) => (
-            <Link
-              to={link.route}
-              key={index}
-              activeProps={{
-                className:
-                  'text-primary font-bold cursor-pointer border-l-2 border-l-primary ',
-                style: { fontWeight: 500 },
-              }}
-              className="flex flex-col items-center text-info justify-center gap-1 py-2 mb-3 transition-all ease-in-out font-normal cursor-pointer"
-            >
-              {link.icon}
-              <p className="text-[10px] font-bold">{link.label}</p>
-            </Link>
-          ))}
+          {links
+            .filter((link) => link.allowedRoles?.includes(user?.role ?? ''))
+            .map((link, index) => (
+              <Link
+                to={link.route}
+                key={index}
+                activeProps={{
+                  className:
+                    'text-primary font-bold cursor-pointer border-l-2 border-l-primary ',
+                  style: { fontWeight: 500 },
+                }}
+                className="flex flex-col items-center text-info justify-center gap-1 py-2 mb-3 transition-all ease-in-out font-normal cursor-pointer"
+              >
+                {link.icon}
+                <p className="text-[10px] font-bold">{link.label}</p>
+              </Link>
+            ))}
         </AppShell.Section>
         <AppShell.Section>
           <p

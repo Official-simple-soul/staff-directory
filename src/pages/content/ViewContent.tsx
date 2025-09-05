@@ -15,6 +15,7 @@ import {
   ActionIcon,
   Menu,
   Skeleton,
+  Center,
 } from '@mantine/core'
 import {
   IconEye,
@@ -46,7 +47,10 @@ interface ViewContentProps {
   contentId: string
 }
 
-function ViewContent({ content, contentId }: ViewContentProps) {
+function ViewContent({ contentId }: ViewContentProps) {
+  const { getContentById } = useContent()
+  const { data: content, isLoading: contentLoading } = getContentById(contentId)
+
   const [imageLoaded, setImageLoaded] = useState(false)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const { getContentReviews } = useContent()
@@ -61,8 +65,8 @@ function ViewContent({ content, contentId }: ViewContentProps) {
   )
 
   const completionRate =
-    content?.totalReads > 0
-      ? (content?.totalCompletions / content?.totalReads) * 100
+    content?.totalReads! > 0
+      ? (content?.totalCompletions! / content?.totalReads!) * 100
       : 0
 
   const formatDate = (timestamp: any) => {
@@ -82,7 +86,7 @@ function ViewContent({ content, contentId }: ViewContentProps) {
   }
 
   const handleEdit = () => {
-    navigate({ to: '/content/new-content', search: content })
+    navigate({ to: '/content/new-content', search: content! })
   }
 
   const handleDelete = () => {
@@ -97,10 +101,40 @@ function ViewContent({ content, contentId }: ViewContentProps) {
     })
   }
 
+  if (contentLoading) {
+    return (
+      <DashboardLayout>
+        <ContentDetailSkeleton />
+      </DashboardLayout>
+    )
+  }
+
+  // Show error state if content doesn't exist
+  if (!content) {
+    return (
+      <DashboardLayout>
+        <Center style={{ height: '60vh' }}>
+          <div className="text-center">
+            <Text size="xl" fw={600} mb="md">
+              Content Not Found
+            </Text>
+            <Text c="dimmed" mb="lg">
+              The content you're looking for doesn't exist or may have been
+              removed.
+            </Text>
+            <AppButton onClick={() => navigate({ to: '/content' })}>
+              Back to Content Library
+            </AppButton>
+          </div>
+        </Center>
+      </DashboardLayout>
+    )
+  }
+
   return (
     <DashboardLayout>
       <Group justify="space-between" mb="xl">
-        <Back />
+        <Back page="contents" />
         <Menu withinPortal position="bottom-end">
           <Menu.Target>
             <ActionIcon variant="subtle" color="gray" size="lg">
@@ -535,3 +569,135 @@ function ViewContent({ content, contentId }: ViewContentProps) {
 }
 
 export default ViewContent
+
+const ContentDetailSkeleton: React.FC = () => {
+  return (
+    <div className="pb-8">
+      <Group justify="space-between" mb="xl">
+        <Skeleton height={36} width={120} />
+        <Skeleton height={36} width={36} circle />
+      </Group>
+
+      <Grid gutter="xl">
+        <Grid.Col span={{ base: 12, lg: 8 }}>
+          <Stack gap="xl">
+            <Paper
+              p={{ base: 'md', md: 'xl' }}
+              radius={radius.app}
+              className="bg-background/80 backdrop-blur-sm"
+            >
+              <Grid gutter="xl">
+                <Grid.Col span={{ base: 12, md: 4 }}>
+                  <Skeleton height={300} radius="md" />
+                </Grid.Col>
+
+                <Grid.Col span={{ base: 12, md: 8 }}>
+                  <Stack gap="md">
+                    <div>
+                      <Skeleton height={32} width="80%" mb="xs" />
+                      <Skeleton height={16} width="40%" />
+                    </div>
+                    <Skeleton height={60} />
+                    <Group gap="xs">
+                      {[1, 2, 3].map((item) => (
+                        <Skeleton key={item} height={24} width={60} />
+                      ))}
+                    </Group>
+                    <Group gap="md">
+                      <Skeleton height={24} width={100} />
+                      <Skeleton height={24} width={80} />
+                    </Group>
+                    <Divider />
+                    <Group gap="xl">
+                      <div>
+                        <Skeleton height={16} width={60} mb="xs" />
+                        <Skeleton height={14} width={80} />
+                      </div>
+                      <div>
+                        <Skeleton height={16} width={50} mb="xs" />
+                        <Skeleton height={14} width={70} />
+                      </div>
+                      <div>
+                        <Skeleton height={16} width={70} mb="xs" />
+                        <Skeleton height={14} width={100} />
+                      </div>
+                    </Group>
+                  </Stack>
+                </Grid.Col>
+              </Grid>
+            </Paper>
+
+            <Card
+              p={{ base: 'md', md: 'xl' }}
+              radius={radius.app}
+              className="bg-background/80 backdrop-blur-sm"
+            >
+              <Skeleton height={24} width={200} mb="md" />
+              <Stack gap="md">
+                {[1, 2, 3].map((item) => (
+                  <Paper key={item} p="md" withBorder>
+                    <Group>
+                      <Skeleton height={40} circle />
+                      <Stack gap={4} style={{ flex: 1 }}>
+                        <Skeleton height={16} width="60%" />
+                        <Skeleton height={12} width="40%" />
+                      </Stack>
+                    </Group>
+                    <Skeleton height={14} mt="sm" width="90%" />
+                    <Skeleton height={14} mt="xs" width="80%" />
+                  </Paper>
+                ))}
+              </Stack>
+            </Card>
+          </Stack>
+        </Grid.Col>
+
+        <Grid.Col span={{ base: 12, lg: 4 }}>
+          <Stack gap="xl">
+            <Card
+              p={{ base: 'md', md: 'xl' }}
+              radius={radius.app}
+              className="bg-background/80 backdrop-blur-sm"
+            >
+              <Skeleton height={24} width={180} mb="md" />
+              <Stack gap="md">
+                {[1, 2, 3, 4, 5].map((item) => (
+                  <Group key={item} justify="space-between">
+                    <Group gap="sm">
+                      <Skeleton height={32} width={32} radius="sm" />
+                      <div>
+                        <Skeleton height={16} width={80} mb="xs" />
+                        <Skeleton height={12} width={60} />
+                      </div>
+                    </Group>
+                    <Skeleton height={24} width={40} />
+                  </Group>
+                ))}
+                <div>
+                  <Group justify="space-between" mb="xs">
+                    <Skeleton height={16} width={100} />
+                    <Skeleton height={16} width={40} />
+                  </Group>
+                  <Skeleton height={8} radius="xl" />
+                </div>
+              </Stack>
+            </Card>
+
+            <Card
+              p={{ base: 'md', md: 'xl' }}
+              radius={radius.app}
+              className="bg-background/80 backdrop-blur-sm"
+            >
+              <Skeleton height={24} width={120} mb="md" />
+              <Stack gap="sm">
+                {[1, 2, 3].map((item) => (
+                  <Skeleton key={item} height={36} radius="md" />
+                ))}
+              </Stack>
+            </Card>
+          </Stack>
+        </Grid.Col>
+      </Grid>
+    </div>
+  )
+}

@@ -1,12 +1,13 @@
+import { roles } from '@/config/config'
 import DashboardLayout from '@/layout/DashboardLayout'
-import { requireAdminAuth } from '@/middleware/auth.middleware'
+import { requireAuth } from '@/middleware/auth.middleware'
 import NewContent from '@/pages/content/NewContent'
 import type { Content } from '@/types/content.type'
 import { createFileRoute, redirect, useSearch } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/content/new-content')({
   loader: async () => {
-    const authResult = await requireAdminAuth()
+    const authResult = await requireAuth(roles.newContent)
     if (authResult.redirect) {
       throw redirect({ to: authResult.redirect })
     }
@@ -20,7 +21,9 @@ function RouteComponent() {
 
   return (
     <DashboardLayout>
-      <NewContent contentToEdit={content} />
+      <NewContent
+        contentToEdit={Object.values(content || {}).length ? content : null}
+      />
     </DashboardLayout>
   )
 }

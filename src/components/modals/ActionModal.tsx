@@ -59,7 +59,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
             {title}
           </Text>
 
-          <Text size="16px" c={colors.infoLight} fw={500} ta="center">
+          <Text size="16px" c={colors.info} fw={400} ta="center">
             {message}
           </Text>
         </Box>

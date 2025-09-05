@@ -18,9 +18,10 @@ import { notifications } from '@mantine/notifications'
 import { auth } from '@/lib/firebase'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { useUser } from '@/services/user.service'
-import { radius } from '@/theme/theme'
+import { colors, radius } from '@/theme/theme'
 import { sharedInputProps } from '@/constant/ui'
 import { AppButton } from '@/components/AppButton'
+import { roles } from '@/config/config'
 
 interface LoginFormValues {
   email: string
@@ -60,7 +61,7 @@ export function LoginScreen() {
         throw new Error('User account not found')
       }
 
-      if (!['admin', 'super-admin'].includes(userData.role)) {
+      if (!roles.appAccess.includes(userData.role)) {
         // Sign out non-admin users immediately
         await auth.signOut()
         throw new Error('Access denied. Admin privileges required.')
@@ -70,7 +71,7 @@ export function LoginScreen() {
       notifications.show({
         title: 'Welcome back!',
         message: `Logged in as ${userData.name}`,
-        color: 'green',
+        color: colors.primary,
       })
 
       navigate({ to: '/dashboard' })

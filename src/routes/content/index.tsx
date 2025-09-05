@@ -1,11 +1,10 @@
-import DashboardLayout from '@/layout/DashboardLayout'
-import { requireAdminAuth } from '@/middleware/auth.middleware'
+import { requireAuth } from '@/middleware/auth.middleware'
 import { ContentPage } from '@/pages/content/Content'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/content/')({
   loader: async () => {
-    const authResult = await requireAdminAuth()
+    const authResult = await requireAuth(['admin', 'super-admin'])
     if (authResult.redirect) {
       throw redirect({ to: authResult.redirect })
     }
@@ -15,9 +14,5 @@ export const Route = createFileRoute('/content/')({
 })
 
 function RouteComponent() {
-  return (
-    <DashboardLayout>
-      <ContentPage />
-    </DashboardLayout>
-  )
+  return <ContentPage />
 }

@@ -1,12 +1,11 @@
 import { roles } from '@/config/config'
-import DashboardLayout from '@/layout/DashboardLayout'
 import { requireAuth } from '@/middleware/auth.middleware'
-import Employees from '@/pages/employee/Employees'
+import BlogPage from '@/pages/blogs/Blog'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/employee/')({
+export const Route = createFileRoute('/blogs/')({
   loader: async () => {
-    const authResult = await requireAuth(roles.employee)
+    const authResult = await requireAuth(roles.blogs)
     if (authResult.redirect) {
       throw redirect({ to: authResult.redirect })
     }
@@ -16,9 +15,5 @@ export const Route = createFileRoute('/employee/')({
 })
 
 function RouteComponent() {
-  return (
-    <DashboardLayout>
-      <Employees />
-    </DashboardLayout>
-  )
+  return <BlogPage />
 }
