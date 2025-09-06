@@ -94,7 +94,9 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
                 className="flex flex-col items-center text-info justify-center gap-1 py-2 mb-3 transition-all ease-in-out font-normal cursor-pointer"
               >
                 {link.icon}
-                <p className="text-[10px] font-bold">{link.label}</p>
+                <p className="text-[10px] font-bold text-center">
+                  {link.label}
+                </p>
               </Link>
             ))}
         </AppShell.Section>

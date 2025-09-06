@@ -15,7 +15,7 @@ export const links = [
   },
   {
     icon: <IconContainer size={20} />,
-    label: 'Content',
+    label: 'Content Management',
     route: '/content',
     allowedRoles: roles.content,
   },
@@ -27,13 +27,13 @@ export const links = [
   },
   {
     icon: <IconUsers size={20} />,
-    label: 'Users',
+    label: 'Users Management',
     route: '/users',
     allowedRoles: roles.users,
   },
   {
     icon: <IconPaperBag size={20} />,
-    label: 'Blogs',
+    label: 'Blogs Management',
     route: '/blogs',
     allowedRoles: roles.blogs,
   },
