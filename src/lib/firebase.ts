@@ -26,7 +26,6 @@ export const storage = getStorage(app)
 // Initialize Auth
 export const auth = getAuth(app)
 
-// ✅ Persist auth state across reloads
 setPersistence(auth, browserLocalPersistence).catch((err) => {
   console.error('Auth persistence error:', err)
 })
