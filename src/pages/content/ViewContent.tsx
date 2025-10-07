@@ -30,6 +30,7 @@ import {
   IconChecklist,
   IconStar,
   IconMessage,
+  IconUser,
 } from '@tabler/icons-react'
 import { useState } from 'react'
 import { colors, radius } from '@/theme/theme'
@@ -401,6 +402,24 @@ function ViewContent({ contentId }: ViewContentProps) {
                 Performance Analytics
               </Text>
               <Stack gap="md">
+                <Group justify="space-between">
+                  <Group gap="sm">
+                    <Avatar size="sm" color="black" variant="light">
+                      <IconUser size={16} />
+                    </Avatar>
+                    <div>
+                      <Text size="sm" fw={500}>
+                        Unique Users
+                      </Text>
+                      <Text size="xs" c="dimmed">
+                        Unique user per content
+                      </Text>
+                    </div>
+                  </Group>
+                  <Text size="lg" fw={700} className="text-primary">
+                    {content?.viewIds?.length || 0}
+                  </Text>
+                </Group>
                 <Group justify="space-between">
                   <Group gap="sm">
                     <Avatar size="sm" color="blue" variant="light">

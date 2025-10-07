@@ -102,6 +102,10 @@ const ContentCard: React.FC<ContentCardProps> = ({
           By {content.author}
         </Text>
 
+        <Text size="xs" fw={400} className="mb-2 text-text" lineClamp={1}>
+          Unique User: {content.viewIds?.length || 0}
+        </Text>
+
         <div className="my-3">
           <Group justify="space-between" className="mb-1">
             <Text size="xs" c="dimmed">

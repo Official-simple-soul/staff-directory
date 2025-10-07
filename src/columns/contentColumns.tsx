@@ -100,6 +100,13 @@ export const contentColumns = (
       ),
     },
     {
+      accessor: 'stats',
+      header: 'Unique Users',
+      render: (row: Content) => (
+        <TableText c={colors.info}>{row.viewIds?.length || 0}</TableText>
+      ),
+    },
+    {
       accessor: 'status',
       header: 'Status',
       render: (row: Content) => {
