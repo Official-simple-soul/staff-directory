@@ -552,7 +552,7 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
                     value={coverImage}
                     onChange={handleCoverImageChange}
                     required={!contentToEdit}
-                    description="Max size: 600KB"
+                    description="Max size: 1MB"
                     error={coverImageError}
                     {...sharedInputProps()}
                   />
@@ -588,8 +588,8 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
                     required={!contentToEdit}
                     description={
                       contentType === 'comic'
-                        ? 'Max size: 4MB'
-                        : 'Max size: 100MB'
+                        ? 'Max size: 5MB'
+                        : 'Max size: 200MB'
                     }
                     error={mediaFileError}
                     {...sharedInputProps()}
