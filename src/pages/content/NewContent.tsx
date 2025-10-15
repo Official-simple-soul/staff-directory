@@ -552,7 +552,7 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
                     value={coverImage}
                     onChange={handleCoverImageChange}
                     required={!contentToEdit}
-                    description="Max size: 1MB"
+                    description={`Max size: ${fileSize.cover}MB`}
                     error={coverImageError}
                     {...sharedInputProps()}
                   />
@@ -588,8 +588,8 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
                     required={!contentToEdit}
                     description={
                       contentType === 'comic'
-                        ? 'Max size: 5MB'
-                        : 'Max size: 200MB'
+                        ? `Max size: ${fileSize.pdf}MB`
+                        : `Max size: ${fileSize.video}MB`
                     }
                     error={mediaFileError}
                     {...sharedInputProps()}
@@ -655,7 +655,7 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
               </Text>
               <List spacing="xs" size="sm" center>
                 <List.Item icon={<IconPhoto size={16} />}>
-                  Cover Image (1MB max)
+                  Cover Image ({fileSize.cover}MB max)
                 </List.Item>
                 <List.Item
                   icon={
@@ -667,8 +667,8 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
                   }
                 >
                   {contentType === 'comic'
-                    ? 'PDF File (5MB max)'
-                    : 'Video File (200MB max)'}
+                    ? `PDF File (${fileSize.pdf}MB max)`
+                    : `Video File (${fileSize.video}MB max)`}
                 </List.Item>
                 <List.Item icon={<IconInfoCircle size={16} />}>
                   Complete all required fields
