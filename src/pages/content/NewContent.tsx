@@ -48,6 +48,7 @@ import { uploadFileToStorage } from '@/utils/fileUpload'
 import { useAnalytics } from '@/services/analytics.service'
 import ActionModal from '@/components/modals/ActionModal'
 import { useNavigate } from '@tanstack/react-router'
+import { fileSize } from '@/constant/constant'
 
 interface CreateContentModalProps {
   contentToEdit?: Content | null
@@ -110,15 +111,15 @@ const validateFileSize = (
 }
 
 const validateImage = (file: File | null): string | null => {
-  return validateFileSize(file, 0.6) // 600KB
+  return validateFileSize(file, fileSize.cover) // 1MB
 }
 
 const validatePDF = (file: File | null): string | null => {
-  return validateFileSize(file, 4) // 4MB
+  return validateFileSize(file, fileSize.pdf) // 5MB
 }
 
 const validateVideo = (file: File | null): string | null => {
-  return validateFileSize(file, 100) // 100MB
+  return validateFileSize(file, fileSize.video) // 200MB
 }
 
 function NewContent({ contentToEdit }: CreateContentModalProps) {
@@ -654,7 +655,7 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
               </Text>
               <List spacing="xs" size="sm" center>
                 <List.Item icon={<IconPhoto size={16} />}>
-                  Cover Image (600kb max)
+                  Cover Image (1MB max)
                 </List.Item>
                 <List.Item
                   icon={
@@ -666,8 +667,8 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
                   }
                 >
                   {contentType === 'comic'
-                    ? 'PDF File (4MB max)'
-                    : 'Video File (100MB max)'}
+                    ? 'PDF File (5MB max)'
+                    : 'Video File (200MB max)'}
                 </List.Item>
                 <List.Item icon={<IconInfoCircle size={16} />}>
                   Complete all required fields
