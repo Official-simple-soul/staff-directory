@@ -26,9 +26,9 @@ const AnalyticsDashboard = () => {
 
   // Calculate derived metrics
   const completionRate = analytics
-    ? (analytics.completion / (analytics.reads || 1)) * 100
+    ? (analytics.completion / (analytics.views || 1)) * 100
     : 0
-  const readsPerUser = analytics ? analytics.reads / (analytics.users || 1) : 0
+  const viewsPerUser = analytics ? analytics.views / (analytics.users || 1) : 0
   const contentCompletionRate = analytics
     ? (analytics.completion / analytics.content / (analytics.users || 1)) * 100
     : 0
@@ -65,7 +65,7 @@ const AnalyticsDashboard = () => {
             value={analytics?.content}
             icon={<IconBook size={20} />}
             color="green"
-            description="Comics available in the app"
+            description="Contents available in the app"
           />
         </Grid.Col>
 
@@ -73,11 +73,11 @@ const AnalyticsDashboard = () => {
         <Grid.Col span={{ base: 12, md: 6, lg: 3 }}>
           <StatCard
             isLoading={isLoading}
-            title="Total Reads"
-            value={analytics?.reads}
+            title="Total Views"
+            value={analytics?.views}
             icon={<IconEye size={20} />}
             color="orange"
-            description="Number of comic openings"
+            description="Number of content openings"
           />
         </Grid.Col>
 
@@ -89,7 +89,7 @@ const AnalyticsDashboard = () => {
             value={analytics?.completion}
             icon={<IconChecklist size={20} />}
             color="violet"
-            description="Completed comic readings"
+            description="Completed content view"
           />
         </Grid.Col>
 
@@ -101,7 +101,7 @@ const AnalyticsDashboard = () => {
                 Completion Rate
               </Text>
               <Text c="dimmed" size="sm">
-                Percentage of reads that result in completions
+                Percentage of views that result in completions
               </Text>
             </div>
 
@@ -164,13 +164,13 @@ const AnalyticsDashboard = () => {
               <>
                 <div className="mb-4">
                   <Group justify="apart" mb="xs">
-                    <Text size="sm">Reads per User</Text>
+                    <Text size="sm">Views per User</Text>
                     <Text fw={500} size="sm">
-                      {readsPerUser.toFixed(1)}
+                      {viewsPerUser.toFixed(1)}
                     </Text>
                   </Group>
                   <Progress
-                    value={Math.min(readsPerUser * 10, 100)}
+                    value={Math.min(viewsPerUser * 10, 100)}
                     color="blue"
                     size="lg"
                     bg={'var(--color-background)'}
@@ -248,10 +248,10 @@ const AnalyticsDashboard = () => {
                 <Grid.Col span={{ base: 12, md: 6, lg: 3 }}>
                   <div className="text-center p-4 rounded-lg bg-orange-50/50 border border-gray-200">
                     <Text fw={700} size="xl" className="text-orange-700">
-                      {analytics?.reads}
+                      {analytics?.views}
                     </Text>
                     <Text size="sm" c="dimmed">
-                      Total Reads
+                      Total Views
                     </Text>
                   </div>
                 </Grid.Col>
