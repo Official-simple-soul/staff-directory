@@ -1,22 +1,22 @@
-import {
-  collection,
-  addDoc,
-  updateDoc,
-  doc,
-  deleteDoc,
-  getDocs,
-  getDoc,
-  query,
-  where,
-  orderBy,
-  QueryDocumentSnapshot,
-  type DocumentData,
-  type SnapshotOptions,
-  limit,
-} from 'firebase/firestore'
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { db, storage } from '@/lib/firebase'
 import type { Content, CreateContentDTO, Review } from '@/types/content.type'
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  QueryDocumentSnapshot,
+  updateDoc,
+  where,
+  type DocumentData,
+  type SnapshotOptions,
+} from 'firebase/firestore'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 
 const contentConverter = {
   toFirestore(content: Content): DocumentData {
@@ -25,27 +25,29 @@ const contentConverter = {
       collection: content.collection,
       collectionId: content.collectionId,
       collectionNum: content.collectionNum,
+      categoryName: content.categoryName,
+      categoryId: content.categoryId,
       genre: content.genre,
-      img: content.img,
+      thumbnail: content.thumbnail,
       key: content.key,
       num: content.num,
+      mode: content.mode,
       package: content.package,
-      pages: content.pages,
-      pdf: content.pdf,
-      preview: content.preview,
+      length: content.length,
+      contentUrl: content.contentUrl,
+      synopsis: content.synopsis,
       rating: content.rating,
       reviews: content.reviews,
-      schedule: content.schedule,
+      scheduledDate: content.scheduledDate,
       status: content.status,
-      tag: content.tag,
+      tagLine: content.tagLine,
       title: content.title,
       totalCompletions: content.totalCompletions,
-      totalReads: content.totalReads,
+      totalRatings: content.totalRatings,
       totalViews: content.totalViews,
-      type: content.type,
-      uploaded: content.uploaded,
-      view: content.view,
-      viewIds: content.viewIds,
+      uploadedAt: content.uploadedAt,
+      updatedAt: content.updatedAt,
+      viewerIds: content.viewerIds,
     }
   },
   fromFirestore(
@@ -59,86 +61,76 @@ const contentConverter = {
       collection: data.collection,
       collectionId: data.collectionId,
       collectionNum: data.collectionNum,
+      categoryName: data.categoryName,
+      categoryId: data.categoryId,
       genre: data.genre,
-      img: data.img,
+      thumbnail: data.thumbnail,
       key: data.key,
       num: data.num,
+      mode: data.mode,
       package: data.package,
-      pages: data.pages,
-      pdf: data.pdf,
-      preview: data.preview,
+      length: data.length,
+      contentUrl: data.contentUrl,
+      synopsis: data.synopsis,
       rating: data.rating,
       reviews: data.reviews,
-      schedule: data.schedule,
+      scheduledDate: data.scheduledDate,
       status: data.status,
-      tag: data.tag,
+      tagLine: data.tagLine,
       title: data.title,
       totalCompletions: data.totalCompletions,
-      totalReads: data.totalReads,
+      totalRatings: data.totalRatings,
       totalViews: data.totalViews,
-      type: data.type,
-      uploaded: data.uploaded,
-      view: data.view,
-      viewIds: data.viewIds,
+      updatedAt: data.updatedAt,
+      uploadedAt: data.uploadedAt,
+      viewerIds: data.viewerIds,
     }
   },
 }
 
-const tableName = 'comics'
+const tableName = 'contents'
 
-// Content service functions
 export const contentApi = {
-  // Get all content
   async getContent(): Promise<Content[]> {
     const q = query(
-      collection(db, tableName),
-      orderBy('uploaded', 'desc'),
-    ).withConverter(contentConverter)
-
+      collection(db, tableName).withConverter(contentConverter),
+      orderBy('uploadedAt', 'desc'),
+    )
     const querySnapshot = await getDocs(q)
-    return querySnapshot.docs.map((doc) => doc.data())
+    return querySnapshot.docs.map((doc) => doc.data() as Content)
   },
 
-  // Get content by type
-  async getContentByType(type: 'comic' | 'video'): Promise<Content[]> {
+  async getContentByType(categoryId: string): Promise<Content[]> {
     const q = query(
-      collection(db, tableName),
-      where('type', '==', type),
-      orderBy('uploaded', 'desc'),
-    ).withConverter(contentConverter)
+      collection(db, tableName).withConverter(contentConverter),
+      where('categoryId', '==', categoryId),
+      orderBy('uploadedAt', 'desc'),
+    )
 
     const querySnapshot = await getDocs(q)
-    return querySnapshot.docs.map((doc) => doc.data())
+    return querySnapshot.docs.map((doc) => doc.data() as Content)
   },
 
-  // Get content by ID
   async getContentById(id: string): Promise<Content | null> {
     const docRef = doc(db, tableName, id).withConverter(contentConverter)
     const docSnap = await getDoc(docRef)
-    return docSnap.exists() ? docSnap.data() : null
+    return docSnap.exists() ? (docSnap.data() as Content) : null
   },
 
-  // Create new content
   async createContent(content: CreateContentDTO): Promise<string> {
-    const docRef = await addDoc(
-      collection(db, tableName).withConverter(contentConverter),
-      content,
-    )
+    const docRef = await addDoc(collection(db, tableName), content)
     return docRef.id
   },
 
-  // Update content
   async updateContent(id: string, content: Partial<Content>): Promise<void> {
-    const docRef = doc(db, tableName, id).withConverter(contentConverter)
+    const docRef = doc(db, tableName, id)
     await updateDoc(docRef, content as DocumentData)
   },
 
-  // Delete content
   async deleteContent(id: string): Promise<void> {
     await deleteDoc(doc(db, tableName, id))
   },
 
-  // Upload file to storage
   async uploadFile(file: File, path: string): Promise<string> {
     const storageRef = ref(storage, path)
     const snapshot = await uploadBytes(storageRef, file)

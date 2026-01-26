@@ -1,25 +1,25 @@
+import { colors } from '@/theme/theme'
+import type { Content } from '@/types/content.type'
 import {
-  Group,
-  Text,
   ActionIcon,
   Badge,
+  Card,
+  Flex,
+  Group,
+  Image,
   Menu,
   Progress,
-  Card,
-  Image,
-  Flex,
+  Text,
 } from '@mantine/core'
 import {
-  IconEdit,
-  IconTrash,
-  IconDotsVertical,
   IconBook,
   IconCrown,
+  IconDotsVertical,
+  IconEdit,
   IconFileAnalytics,
   IconFreeRights,
+  IconTrash,
 } from '@tabler/icons-react'
-import type { Content } from '@/types/content.type'
-import { colors } from '@/theme/theme'
 
 interface ContentCardProps {
   content: Content
@@ -36,8 +36,8 @@ const ContentCard: React.FC<ContentCardProps> = ({
   onView,
 }) => {
   const completionRate =
-    content.totalReads > 0
-      ? (content.totalCompletions / content.totalReads) * 100
+    content.totalViews > 0
+      ? (content.totalCompletions / content.totalViews) * 100
       : 0
 
   return (
@@ -50,7 +50,7 @@ const ContentCard: React.FC<ContentCardProps> = ({
       <Card.Section className="relative mb-4">
         <div className="relative overflow-hidden rounded-t-lg">
           <Image
-            src={content.img}
+            src={content.thumbnail}
             h={350}
             alt={content.title}
             className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -77,7 +77,8 @@ const ContentCard: React.FC<ContentCardProps> = ({
             <span className="capitalize">{content.status}</span>
             <span className="flex items-center">
               <IconBook size={12} className="mr-1" />
-              {content.pages}p
+              {content.length}
+              {content.mode === 'reading' ? 'p' : 'm'}
             </span>
           </div>
         </div>
@@ -105,7 +106,7 @@ const ContentCard: React.FC<ContentCardProps> = ({
           <Group justify="space-between" className="mb-1">
             <Text size="xs" c="dimmed">
               <span className="font-semibold text-text mr-1">
-                {content.totalReads}
+                {content.totalViews}
               </span>
               reads
             </Text>
@@ -136,8 +137,8 @@ const ContentCard: React.FC<ContentCardProps> = ({
 
         <Flex justify={'space-between'} align={'center'} className="mt-3">
           <p className="text-xs text-text px-2 py-1 rounded-md transition-colors">
-            {content.uploaded
-              ? content.uploaded.toDate().toLocaleDateString()
+            {content.uploadedAt
+              ? content.uploadedAt.toDate().toLocaleDateString()
               : ''}
           </p>
           <Menu withinPortal position="top-end" shadow="sm">

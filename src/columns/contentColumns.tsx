@@ -1,9 +1,9 @@
-import type { ColumnDefinition } from '@/types/global.types'
-import type { Content } from '@/types/content.type'
-import { Badge, Box, Group, Image } from '@mantine/core'
-import { IconBook, IconVideo, IconCrown, IconClock } from '@tabler/icons-react'
-import { TableMenu, TableText } from './Reuseable'
 import { colors } from '@/theme/theme'
+import type { Content } from '@/types/content.type'
+import type { ColumnDefinition } from '@/types/global.types'
+import { Badge, Box, Group, Image } from '@mantine/core'
+import { IconBook, IconClock, IconCrown, IconVideo } from '@tabler/icons-react'
+import { TableMenu, TableText } from './Reuseable'
 
 export const contentColumns = (
   handleView: (content: Content) => void,
@@ -18,7 +18,7 @@ export const contentColumns = (
       render: (row: Content) => (
         <Group wrap="nowrap">
           <Image
-            src={row.img}
+            src={row.thumbnail}
             w={40}
             h={50}
             radius="sm"
@@ -39,7 +39,7 @@ export const contentColumns = (
         <Badge
           variant="light"
           leftSection={
-            row.type === 'comic' ? (
+            row.mode === 'reading' ? (
               <IconBook size={14} />
             ) : (
               <IconVideo size={14} />
@@ -87,7 +87,7 @@ export const contentColumns = (
       accessor: 'stats',
       header: 'Reads',
       render: (row: Content) => (
-        <TableText>{row.totalReads?.toLocaleString() || 0}</TableText>
+        <TableText>{row.totalViews?.toLocaleString() || 0}</TableText>
       ),
     },
     {
@@ -103,15 +103,23 @@ export const contentColumns = (
       accessor: 'stats',
       header: 'Unique Users',
       render: (row: Content) => (
-        <TableText c={colors.info}>{row.viewIds?.length || 0}</TableText>
+        <TableText c={colors.info}>{row.viewerIds?.length || 0}</TableText>
       ),
     },
     {
       accessor: 'status',
       header: 'Status',
       render: (row: Content) => {
+        const scheduledDateObj: Date | null = row?.scheduledDate
+          ? typeof row.scheduledDate === 'string'
+            ? new Date(row.scheduledDate)
+            : (row.scheduledDate as any)?.toDate
+              ? (row.scheduledDate as any).toDate()
+              : null
+          : null
+
         const status =
-          row?.schedule && row.schedule?.toDate() > new Date()
+          scheduledDateObj && scheduledDateObj > new Date()
             ? 'scheduled'
             : row.status
 
@@ -134,7 +142,7 @@ export const contentColumns = (
             {status}
             {status === 'scheduled' && (
               <Box component="span" ml={4}>
-                {row.schedule?.toDate().toLocaleDateString('en-GB', {
+                {scheduledDateObj?.toLocaleDateString('en-GB', {
                   day: 'numeric',
                   month: 'short',
                 })}

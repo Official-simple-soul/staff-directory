@@ -1,54 +1,63 @@
-import { useState, useEffect } from 'react'
+// Updated NewContent component with category implementation
+import { AppButton } from '@/components/AppButton'
+import ActionModal from '@/components/modals/ActionModal'
+import { CreateCollectionModal } from '@/components/modals/CreateCollectionModal'
+import PageHeader from '@/components/PageHeader'
+import { fileSize } from '@/constant/constant'
+import { sharedInputProps } from '@/constant/ui'
+import { useAnalytics } from '@/services/analytics.service'
+import { useCategory } from '@/services/category.service'
+import { useCollection } from '@/services/collection.service'
+import { useContent } from '@/services/content.service'
+import { colors } from '@/theme/theme'
+import type { Content } from '@/types/content.type'
+import { uploadFileToStorage } from '@/utils/fileUpload'
 import {
-  TextInput,
-  Select,
-  Textarea,
-  Box,
-  Stack,
-  FileInput,
-  NumberInput,
-  MultiSelect,
-  Switch,
-  Divider,
-  Tabs,
-  Grid,
-  Paper,
-  Text,
-  Stepper,
-  Card,
-  List,
   Alert,
+  Box,
+  Card,
+  Divider,
+  FileInput,
+  Flex,
+  Grid,
+  Group,
   Image,
+  List,
+  Modal,
+  MultiSelect,
+  NumberInput,
+  Paper,
+  Select,
+  Stack,
+  Stepper,
+  Switch,
+  Tabs,
+  Text,
+  Textarea,
+  TextInput,
 } from '@mantine/core'
+import { DatePicker } from '@mantine/dates'
 import { useForm } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import {
-  IconUpload,
   IconBook,
-  IconVideo,
-  IconPhoto,
-  IconFileTypePdf,
-  IconVideoFilled,
-  IconInfoCircle,
-  IconClock,
-  IconSparkles,
-  IconPlus,
+  IconCategory,
+  IconCategoryPlus,
   IconCheck,
+  IconClock,
+  IconFileTypePdf,
+  IconInfoCircle,
+  IconPhoto,
+  IconPlus,
+  IconSparkles,
+  IconUpload,
+  IconVideo,
+  IconVideoFilled,
+  IconX,
 } from '@tabler/icons-react'
-import type { Content } from '@/types/content.type'
-import { DatePicker } from '@mantine/dates'
-import PageHeader from '@/components/PageHeader'
-import { sharedInputProps } from '@/constant/ui'
-import { colors } from '@/theme/theme'
-import { CreateCollectionModal } from '@/components/modals/CreateCollectionModal'
-import { useCollection } from '@/services/collection.service'
-import { useContent } from '@/services/content.service'
-import { Timestamp } from 'firebase/firestore'
-import { uploadFileToStorage } from '@/utils/fileUpload'
-import { useAnalytics } from '@/services/analytics.service'
-import ActionModal from '@/components/modals/ActionModal'
 import { useNavigate } from '@tanstack/react-router'
-import { fileSize } from '@/constant/constant'
+import { Timestamp } from 'firebase/firestore'
+import { useEffect, useState } from 'react'
 
 interface CreateContentModalProps {
   contentToEdit?: Content | null
@@ -77,13 +86,12 @@ const UPLOAD_STEPS = [
   {
     label: 'Content Details',
     icon: <IconBook size={16} />,
-    description:
-      'Select a collection to auto-fill author, collection number, and genre.',
+    description: 'Select collection and category to auto-fill details',
   },
   {
     label: 'Additional Details',
     icon: <IconInfoCircle size={16} />,
-    description: 'Add duration, status, and and preview',
+    description: 'Add duration, status, and preview',
   },
   {
     label: 'Media Upload',
@@ -97,7 +105,6 @@ const UPLOAD_STEPS = [
   },
 ]
 
-// File size validation functions
 const validateFileSize = (
   file: File | null,
   maxSizeMB: number,
@@ -122,68 +129,99 @@ const validateVideo = (file: File | null): string | null => {
   return validateFileSize(file, fileSize.video) // 200MB
 }
 
+const CATEGORY_ICONS = [
+  { value: 'book', label: 'Book' },
+  { value: 'video', label: 'Video' },
+  { value: 'movie', label: 'Movie' },
+  { value: 'tv', label: 'TV' },
+  { value: 'game', label: 'Game' },
+  { value: 'music', label: 'Music' },
+  { value: 'art', label: 'Art' },
+  { value: 'sports', label: 'Sports' },
+  { value: 'tech', label: 'Tech' },
+  { value: 'education', label: 'Education' },
+  { value: 'entertainment', label: 'Entertainment' },
+  { value: 'news', label: 'News' },
+]
+
 function NewContent({ contentToEdit }: CreateContentModalProps) {
-  const [contentType, setContentType] = useState<'comic' | 'video'>('comic')
+  const [contentType, setContentType] = useState<'reading' | 'watching'>(
+    'reading',
+  )
   const [coverImage, setCoverImage] = useState<File | null>(null)
   const [coverImageError, setCoverImageError] = useState<string | null>(null)
   const [mediaFile, setMediaFile] = useState<File | null>(null)
   const { collections, incrementCollectionCount } = useCollection()
   const { analytics, incrementAnalyticsCount } = useAnalytics()
   const { createContent, updateContent } = useContent()
+  const {
+    categories: allCategories,
+    isLoading: categoriesLoading,
+    createCategory,
+    isCreating,
+  } = useCategory()
   const [mediaFileError, setMediaFileError] = useState<string | null>(null)
   const [isScheduled, setIsScheduled] = useState(false)
   const [openNewCollectionModal, setOpenNewCollectionModal] = useState(false)
+  const [openNewCategoryModal, setOpenNewCategoryModal] = useState(false)
   const [coverImagePreview, setCoverImagePreview] = useState<string | null>(
     null,
   )
   const [contentCreatedModalOpen, setContentCreatedModalOpen] = useState(false)
   const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
+  const isReading = contentType === 'reading'
 
   const form = useForm({
     initialValues: {
       title: '',
-      tag: '',
+      tagLine: '',
       author: '',
       collection: '',
       collectionId: '',
       collectionNum: 1,
       genre: [] as string[],
-      preview: '',
+      synopsis: '',
       package: 'free' as 'free' | 'premium',
       status: 'draft' as 'draft' | 'published',
-      type: 'comic' as 'comic' | 'video',
-      pages: 1,
-      duration: 0,
-      scheduleDate: null as Date | null,
+      mode: 'reading' as 'reading' | 'watching',
+      length: 1,
+      scheduledDate: '',
+      categoryId: '',
+      categoryName: '',
     },
 
     validate: {
       title: (value) => (value.trim() ? null : 'Title is required'),
       author: (value) => (value.trim() ? null : 'Author is required'),
       collection: (value) => (value.trim() ? null : 'Collection is required'),
+      categoryId: (value) => (value.trim() ? null : 'Category is required'),
       genre: (value) =>
         value.length > 0 ? null : 'At least one genre is required',
-      preview: (value) =>
+      synopsis: (value) =>
         value.trim() ? null : 'Preview description is required',
-      pages: (value, values) =>
-        values.type === 'comic' && (!value || value < 1)
-          ? 'Pages must be at least 1'
-          : null,
-      duration: (value, values) =>
-        values.type === 'video' && (!value || value < 1)
-          ? 'Duration must be at least 1 minute'
+      length: (value) =>
+        !value || value < 1
+          ? `Length must be at least 1 ${isReading ? 'page' : 'minute'}`
           : null,
     },
   })
 
-  // Handle cover image upload with preview and validation
+  const newCategoryForm = useForm({
+    initialValues: {
+      name: '',
+      icon: 'book',
+    },
+    validate: {
+      name: (value) => (value.trim() ? null : 'Category name is required'),
+    },
+  })
+
   const handleCoverImageChange = (file: File | null) => {
     setCoverImage(file)
     setCoverImageError(null)
 
     if (file) {
-      // Validate file size
       const error = validateImage(file)
       if (error) {
         setCoverImageError(error)
@@ -191,7 +229,6 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
         return
       }
 
-      // Create preview
       const reader = new FileReader()
       reader.onload = (e) => {
         setCoverImagePreview(e.target?.result as string)
@@ -202,21 +239,18 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
     }
   }
 
-  // Handle media file upload with validation
   const handleMediaFileChange = (file: File | null) => {
     setMediaFile(file)
     setMediaFileError(null)
 
     if (file) {
-      const error =
-        contentType === 'comic' ? validatePDF(file) : validateVideo(file)
+      const error = isReading ? validatePDF(file) : validateVideo(file)
       if (error) {
         setMediaFileError(error)
       }
     }
   }
 
-  // Auto-fill collection data when collection is selected
   const handleCollectionChange = (collectionId: string) => {
     const selectedCollection = collections.find(
       (col) => col.id === collectionId,
@@ -229,9 +263,64 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
         collectionId: selectedCollection.id,
         genre: selectedCollection.genre,
         collectionNum: (selectedCollection.count || 0) + 1,
-        type: selectedCollection.type,
+        mode: selectedCollection.mode,
       })
-      setContentType(selectedCollection.type as 'comic' | 'video')
+      setContentType(selectedCollection.mode as 'reading' | 'watching')
+    }
+  }
+
+  const handleCategoryChange = (categoryId: string) => {
+    const selectedCategory = allCategories.find((cat) => cat.id === categoryId)
+    if (selectedCategory) {
+      form.setValues({
+        ...form.values,
+        categoryId: selectedCategory.id,
+        categoryName: selectedCategory.name,
+      })
+    }
+  }
+
+  const handleCreateNewCategory = async () => {
+    const { name, icon } = newCategoryForm.values
+
+    if (!name.trim()) {
+      notifications.show({
+        title: 'Validation Error',
+        message: 'Please enter a category name',
+        color: 'red',
+      })
+      return
+    }
+
+    try {
+      const categoryId = name.toLowerCase().replace(/\s+/g, '-')
+
+      await createCategory({
+        name,
+        icon,
+        mode: contentType,
+      })
+
+      notifications.show({
+        title: 'Success',
+        message: 'Category created successfully',
+        color: 'green',
+      })
+
+      form.setValues({
+        ...form.values,
+        categoryId: categoryId,
+        categoryName: name,
+      })
+
+      newCategoryForm.reset()
+      setOpenNewCategoryModal(false)
+    } catch (error) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to create category',
+        color: 'red',
+      })
     }
   }
 
@@ -239,21 +328,23 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
     if (contentToEdit) {
       form.setValues({
         title: contentToEdit.title,
-        tag: contentToEdit.tag,
+        tagLine: contentToEdit.tagLine,
         author: contentToEdit.author,
         collection: contentToEdit.collectionId || '',
+        collectionId: contentToEdit.collectionId,
         collectionNum: contentToEdit.collectionNum,
         genre: contentToEdit.genre,
-        preview: contentToEdit.preview,
-        package: contentToEdit.package,
-        status: contentToEdit.status,
-        type: contentToEdit.type,
-        pages: contentToEdit.pages,
-        duration: 0,
+        synopsis: contentToEdit.synopsis,
+        package: contentToEdit.package as 'free',
+        status: contentToEdit.status as 'draft',
+        mode: contentToEdit.mode,
+        length: contentToEdit.length,
+        categoryId: contentToEdit.categoryId || '',
+        categoryName: contentToEdit.categoryName || '',
       })
-      setContentType(contentToEdit.type)
-      setIsScheduled(!!contentToEdit.schedule)
-      setCoverImagePreview(contentToEdit.img)
+      setContentType(contentToEdit.mode)
+      setIsScheduled(!!contentToEdit.scheduledDate)
+      setCoverImagePreview(contentToEdit.thumbnail)
     } else {
       form.reset()
       setCoverImage(null)
@@ -264,6 +355,19 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
   }, [contentToEdit])
 
   const handleSubmit = async (values: typeof form.values) => {
+    const selectedCollection = collections.find(
+      (e) => e.id === values.collectionId,
+    )
+
+    if (selectedCollection?.mode !== contentType) {
+      notifications.show({
+        title: 'Selected Collection Error',
+        message: `The selected collection mode (${selectedCollection?.mode}) does not match with the type of content you are creating (${contentType})`,
+        color: 'red',
+      })
+      return
+    }
+
     setIsLoading(true)
     try {
       if (!contentToEdit) {
@@ -286,8 +390,8 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
         return
       }
 
-      let imgUrl = contentToEdit?.img || ''
-      let mediaUrl = contentToEdit?.pdf || contentToEdit?.video || ''
+      let imgUrl = contentToEdit?.thumbnail || ''
+      let mediaUrl = contentToEdit?.contentUrl || ''
 
       if (coverImage) {
         const coverImagePath = `comic-images/${values.title.replace(/\s+/g, '_')}${values.collectionNum}`
@@ -295,48 +399,48 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
       }
 
       if (mediaFile) {
-        const mediaPath =
-          contentType === 'comic'
-            ? `comics-pdf/${values.title.replace(/\s+/g, '_')}${values.collectionNum}`
-            : `videos/${values.title.replace(/\s+/g, '_')}${values.collectionNum}`
+        const mediaPath = isReading
+          ? `comics-pdf/${values.title.replace(/\s+/g, '_')}${values.collectionNum}`
+          : `videos/${values.title.replace(/\s+/g, '_')}${values.collectionNum}`
         mediaUrl = await uploadFileToStorage(mediaFile, mediaPath)
       }
 
-      const contentData = {
-        ...values,
-        type: contentType,
-        img: imgUrl,
-        ...(contentType === 'comic' && { pdf: mediaUrl }),
-        ...(contentType === 'video' && { video: mediaUrl }),
-        schedule:
-          isScheduled && values.scheduleDate
-            ? Timestamp.fromDate(new Date(values.scheduleDate))
-            : null,
-        ...(!contentToEdit && {
-          key:
-            `${values.collection.split(' ').join('')}${values.collectionNum}` ||
-            '',
-          num: (analytics?.content || 0) + 1,
-          totalCompletions: 0,
-          totalReads: 0,
-          totalViews: 0,
-          view: 0,
-          viewIds: [],
-          rating: 0,
-          reviews: 0,
-          uploaded: Timestamp.now(),
-        }),
-      }
-
       if (contentToEdit) {
+        const contentData = {
+          ...values,
+          type: contentType,
+          thumbnail: imgUrl,
+          contentUrl: mediaUrl,
+          ...(values.scheduledDate && { scheduledDate: values.scheduledDate }),
+        }
+
         await updateContent({
           id: contentToEdit.id!,
           data: contentData,
         })
       } else {
+        const contentData = {
+          ...values,
+          type: contentType,
+          thumbnail: imgUrl,
+          contentUrl: mediaUrl,
+          ...(values.scheduledDate && { scheduledDate: values.scheduledDate }),
+          key:
+            `${values.collection.split(' ').join('')}${values.collectionNum}` ||
+            '',
+          num: (analytics?.content || 0) + 1,
+          totalCompletions: 0,
+          totalRatings: 0,
+          totalViews: 0,
+          view: 0,
+          viewerIds: [],
+          rating: 0,
+          reviews: 0,
+          uploadedAt: Timestamp.now(),
+          updatedAt: Timestamp.now(),
+        }
         await createContent(contentData)
 
-        // Then update collection count and analytics
         await Promise.all([
           incrementCollectionCount(values.collectionId),
 
@@ -378,24 +482,60 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
             loading={isLoading}
           />
           <Tabs
-            defaultValue="comic"
+            defaultValue="flex"
             value={contentType}
-            onChange={(v) => setContentType(v as 'comic' | 'video')}
+            onChange={(v) => setContentType(v as 'reading' | 'watching')}
             mt={'xl'}
             color={colors.primary}
           >
             <Tabs.List grow mb="md">
-              <Tabs.Tab value="comic" leftSection={<IconBook size={16} />}>
-                Comic
+              <Tabs.Tab value="reading" leftSection={<IconBook size={16} />}>
+                Flex (Pdf)
               </Tabs.Tab>
-              <Tabs.Tab value="video" leftSection={<IconVideo size={16} />}>
-                Video
+              <Tabs.Tab value="watching" leftSection={<IconVideo size={16} />}>
+                Watch (Video)
               </Tabs.Tab>
             </Tabs.List>
           </Tabs>
 
           <Box component="form" onSubmit={form.onSubmit(handleSubmit)}>
             <Stack gap="md">
+              <Grid>
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <Select
+                    label="Category"
+                    placeholder={`Select a ${contentType} category`}
+                    required
+                    data={
+                      allCategories?.map((cat) => ({
+                        value: cat.id,
+                        label: cat.name,
+                      })) || []
+                    }
+                    description="Categorize your content for better organization"
+                    searchable
+                    nothingFoundMessage="No categories found"
+                    value={form.values.categoryId}
+                    {...form.getInputProps('categoryId')}
+                    onChange={(value) => {
+                      form.getInputProps('categoryId').onChange(value)
+                      if (value) handleCategoryChange(value)
+                    }}
+                    {...sharedInputProps()}
+                    disabled={categoriesLoading}
+                  />
+                  <div className="flex items-center gap-1 mt-1 text-primary cursor-pointer">
+                    <IconCategoryPlus size={12} />
+                    <p
+                      className="text-xs text-primary hover:underline"
+                      onClick={() => setOpenNewCategoryModal(true)}
+                    >
+                      Create New Category
+                    </p>
+                  </div>
+                </Grid.Col>
+              </Grid>
+
               <Grid>
                 <Grid.Col span={8}>
                   <TextInput
@@ -423,7 +563,7 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
               <TextInput
                 label="Tagline"
                 placeholder="Enter a catchy tagline"
-                {...form.getInputProps('tag')}
+                {...form.getInputProps('tagLine')}
                 {...sharedInputProps()}
               />
 
@@ -449,7 +589,7 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
                   <div className="flex items-center gap-1 mt-1 text-primary cursor-pointer">
                     <IconPlus size={12} />
                     <p
-                      className="text-xs text-primary"
+                      className="text-xs text-primary hover:underline"
                       onClick={() => setOpenNewCollectionModal(true)}
                     >
                       New Collection
@@ -498,24 +638,14 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
               </Grid>
 
               <Grid>
-                <Grid.Col span={6}>
-                  {contentType === 'comic' ? (
-                    <NumberInput
-                      label="Number of Pages"
-                      min={1}
-                      required
-                      {...form.getInputProps('pages')}
-                      {...sharedInputProps()}
-                    />
-                  ) : (
-                    <NumberInput
-                      label="Duration (minutes)"
-                      min={1}
-                      required
-                      {...form.getInputProps('duration')}
-                      {...sharedInputProps()}
-                    />
-                  )}
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <NumberInput
+                    label={isReading ? 'Number of Pages' : 'Duration (minutes)'}
+                    min={1}
+                    required
+                    {...form.getInputProps('length')}
+                    {...sharedInputProps()}
+                  />
                 </Grid.Col>
                 <Grid.Col span={6}>
                   <Select
@@ -536,7 +666,7 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
                 required
                 autosize
                 minRows={3}
-                {...form.getInputProps('preview')}
+                {...form.getInputProps('synopsis')}
                 {...sharedInputProps()}
               />
 
@@ -556,13 +686,13 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
                     error={coverImageError}
                     {...sharedInputProps()}
                   />
-                  {(coverImagePreview || contentToEdit?.img) && (
+                  {(coverImagePreview || contentToEdit?.thumbnail) && (
                     <div className="mt-3">
                       <Text size="sm" fw={500} mb="xs">
                         Preview:
                       </Text>
                       <Image
-                        src={coverImagePreview || contentToEdit?.img}
+                        src={coverImagePreview || contentToEdit?.thumbnail}
                         height={200}
                         width={150}
                         alt="Cover preview"
@@ -575,19 +705,17 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, sm: 6 }}>
                   <FileInput
-                    label={contentType === 'comic' ? 'PDF File' : 'Video File'}
-                    placeholder={`Upload ${contentType === 'comic' ? 'PDF' : 'video'}`}
+                    label={isReading ? 'PDF File' : 'Video File'}
+                    placeholder={`Upload ${isReading ? 'PDF' : 'video'}`}
                     accept={
-                      contentType === 'comic'
-                        ? 'application/pdf'
-                        : 'video/mp4,video/webm'
+                      isReading ? 'application/pdf' : 'video/mp4,video/webm'
                     }
                     leftSection={<IconUpload size={16} />}
                     value={mediaFile}
                     onChange={handleMediaFileChange}
                     required={!contentToEdit}
                     description={
-                      contentType === 'comic'
+                      isReading
                         ? `Max size: ${fileSize.pdf}MB`
                         : `Max size: ${fileSize.video}MB`
                     }
@@ -615,7 +743,7 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
                     <div className="flex flex-col items-center justify-center">
                       <DatePicker
                         minDate={new Date()}
-                        {...form.getInputProps('scheduleDate')}
+                        {...form.getInputProps('scheduledDate')}
                       />
                     </div>
                   )}
@@ -659,16 +787,19 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
                 </List.Item>
                 <List.Item
                   icon={
-                    contentType === 'comic' ? (
+                    isReading ? (
                       <IconFileTypePdf size={16} />
                     ) : (
                       <IconVideoFilled size={16} />
                     )
                   }
                 >
-                  {contentType === 'comic'
+                  {isReading
                     ? `PDF File (${fileSize.pdf}MB max)`
                     : `Video File (${fileSize.video}MB max)`}
+                </List.Item>
+                <List.Item icon={<IconCategory size={16} />}>
+                  Select or create a category
                 </List.Item>
                 <List.Item icon={<IconInfoCircle size={16} />}>
                   Complete all required fields
@@ -684,6 +815,9 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
               <List spacing="xs" size="sm">
                 <List.Item>
                   Use high-quality cover images (300x400 recommended)
+                </List.Item>
+                <List.Item>
+                  Choose appropriate categories for better organization
                 </List.Item>
                 <List.Item>Write engaging preview descriptions</List.Item>
                 <List.Item>
@@ -737,10 +871,75 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
           </Paper>
         </div>
       </div>
+
       <CreateCollectionModal
         opened={openNewCollectionModal}
         onClose={() => setOpenNewCollectionModal(false)}
       />
+
+      <Modal
+        opened={openNewCategoryModal}
+        onClose={() => setOpenNewCategoryModal(false)}
+        title={
+          <Group>
+            <IconCategoryPlus size={20} />
+            <Text fw={600}>Create New Category</Text>
+          </Group>
+        }
+        centered
+        radius="lg"
+        size="md"
+      >
+        <Stack>
+          <Alert color="blue" variant="light">
+            <Text size="sm">
+              This category will be created for{' '}
+              <strong>
+                {contentType === 'reading' ? 'Reading' : 'Watching'}
+              </strong>{' '}
+              content.
+            </Text>
+          </Alert>
+
+          <TextInput
+            label="Category Name"
+            placeholder="Enter category name"
+            required
+            {...newCategoryForm.getInputProps('name')}
+            {...sharedInputProps()}
+            description="e.g., Anime, Manga, Documentary, Series"
+          />
+
+          <Select
+            label="Category Icon"
+            placeholder="Select an icon"
+            data={CATEGORY_ICONS}
+            {...newCategoryForm.getInputProps('icon')}
+            {...sharedInputProps()}
+            description="Choose an icon that represents this category"
+          />
+
+          <Flex gap={'md'}>
+            <AppButton
+              variant="default"
+              onClick={() => setOpenNewCategoryModal(false)}
+              leftSection={<IconX size={16} />}
+              fullWidth
+            >
+              Cancel
+            </AppButton>
+            <AppButton
+              onClick={handleCreateNewCategory}
+              loading={isCreating}
+              leftSection={<IconCheck size={16} />}
+              fullWidth
+            >
+              Create Category
+            </AppButton>
+          </Flex>
+        </Stack>
+      </Modal>
+
       <ActionModal
         opened={contentCreatedModalOpen}
         onClose={() => setContentCreatedModalOpen(false)}
@@ -768,9 +967,15 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
           setCoverImagePreview(null)
         }}
         primaryButtonColor={colors.primary}
-        secondaryButtonText="Cancel"
+        secondaryButtonText="Go To Contents"
         onSecondaryButtonClick={() => {
-          navigate({ to: '/content' })
+          navigate({
+            to: '/content',
+            search: (prev) => ({
+              view: prev.view as 'grid',
+              mode: prev.mode as 'reading',
+            }),
+          })
         }}
       />
     </div>

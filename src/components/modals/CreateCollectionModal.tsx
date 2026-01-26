@@ -1,20 +1,20 @@
-import { useEffect } from 'react'
-import {
-  Modal,
-  TextInput,
-  Select,
-  Group,
-  Box,
-  Stack,
-  MultiSelect,
-} from '@mantine/core'
-import { useForm } from '@mantine/form'
-import { notifications } from '@mantine/notifications'
-import { AppButton } from '../AppButton'
-import type { Collection } from '@/types/collection.type'
 import { modalBaseProps, sharedInputProps } from '@/constant/ui'
 import { useCollection } from '@/services/collection.service'
 import { colors } from '@/theme/theme'
+import type { Collection } from '@/types/collection.type'
+import {
+  Box,
+  Group,
+  Modal,
+  MultiSelect,
+  Select,
+  Stack,
+  TextInput,
+} from '@mantine/core'
+import { useForm } from '@mantine/form'
+import { notifications } from '@mantine/notifications'
+import { useEffect } from 'react'
+import { AppButton } from '../AppButton'
 
 interface CreateCollectionModalProps {
   opened: boolean
@@ -38,8 +38,8 @@ const genres = [
 ]
 
 const contentTypes = [
-  { value: 'comic', label: 'Comic' },
-  { value: 'video', label: 'Video' },
+  { value: 'reading', label: 'Flex' },
+  { value: 'watching', label: 'Watching' },
 ]
 
 export function CreateCollectionModal({
@@ -52,14 +52,14 @@ export function CreateCollectionModal({
     initialValues: {
       name: '',
       author: '',
-      type: 'comic' as 'comic' | 'video',
+      mode: 'reading' as 'reading' | 'watching',
       genre: [] as string[],
     },
 
     validate: {
       name: (value) => (value.trim() ? null : 'Collection name is required'),
       author: (value) => (value.trim() ? null : 'Author is required'),
-      type: (value) => (value ? null : 'Content type is required'),
+      mode: (value) => (value ? null : 'Content type is required'),
       genre: (value) =>
         value.length > 0 ? null : 'At least one genre is required',
     },
@@ -70,7 +70,7 @@ export function CreateCollectionModal({
       form.setValues({
         name: collectionToEdit.name,
         author: collectionToEdit.author,
-        type: collectionToEdit.type,
+        mode: collectionToEdit.mode,
         genre: collectionToEdit.genre,
       })
     } else {
@@ -136,7 +136,7 @@ export function CreateCollectionModal({
             placeholder="Select type"
             required
             data={contentTypes}
-            {...form.getInputProps('type')}
+            {...form.getInputProps('mode')}
             {...sharedInputProps()}
           />
 

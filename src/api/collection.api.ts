@@ -1,29 +1,29 @@
-import {
-  collection,
-  addDoc,
-  updateDoc,
-  doc,
-  deleteDoc,
-  getDocs,
-  getDoc,
-  query,
-  where,
-  orderBy,
-  QueryDocumentSnapshot,
-  type DocumentData,
-  type SnapshotOptions,
-  increment,
-  serverTimestamp,
-} from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import type { Collection } from '@/types/collection.type'
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  increment,
+  orderBy,
+  query,
+  QueryDocumentSnapshot,
+  serverTimestamp,
+  updateDoc,
+  where,
+  type DocumentData,
+  type SnapshotOptions,
+} from 'firebase/firestore'
 
 const collectionConverter = {
   toFirestore(collectionData: Collection): DocumentData {
     return {
       name: collectionData.name,
       author: collectionData.author,
-      type: collectionData.type,
+      mode: collectionData.mode,
       genre: collectionData.genre,
       count: collectionData.count || 0,
       createdAt: collectionData.createdAt,
@@ -38,7 +38,7 @@ const collectionConverter = {
       id: snapshot.id,
       name: data.name,
       author: data.author,
-      type: data.type,
+      mode: data.mode,
       genre: data.genre,
       count: data.count || 0,
       createdAt: data.createdAt,

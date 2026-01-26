@@ -1,34 +1,37 @@
-import React, { useState } from 'react'
+import { AppButton } from '@/components/AppButton'
+import { EmptyState } from '@/components/EmptyState'
+import ActionModal from '@/components/modals/ActionModal'
+import PageHeader from '@/components/PageHeader'
+import DashboardLayout from '@/layout/DashboardLayout'
+import { useAnalytics } from '@/services/analytics.service'
+import { useCollection } from '@/services/collection.service'
+import { useContent } from '@/services/content.service'
+import { colors } from '@/theme/theme'
+import type { Content } from '@/types/content.type'
 import {
+  Card,
+  Center,
   Grid,
   Group,
   Paper,
+  SegmentedControl,
   Skeleton,
   Text,
-  SegmentedControl,
-  Card,
-  Center,
 } from '@mantine/core'
-import { IconList, IconGridDots, IconTrash } from '@tabler/icons-react'
-import type { Content } from '@/types/content.type'
+import { IconGridDots, IconList, IconTrash } from '@tabler/icons-react'
+import { useNavigate, useSearch } from '@tanstack/react-router'
+import React, { startTransition, useState } from 'react'
 import ContentCard from './components/ContentCard'
 import ContentList from './components/ContentList'
-import { useNavigate } from '@tanstack/react-router'
-import PageHeader from '@/components/PageHeader'
-import { AppButton } from '@/components/AppButton'
-import { EmptyState } from '@/components/EmptyState'
-import { useContent } from '@/services/content.service'
-import ActionModal from '@/components/modals/ActionModal'
-import { colors } from '@/theme/theme'
-import { useCollection } from '@/services/collection.service'
-import { useAnalytics } from '@/services/analytics.service'
-import DashboardLayout from '@/layout/DashboardLayout'
 
 export const ContentPage: React.FC = () => {
-  const [viewMode, setViewMode] = useState<'list' | 'grid'>('grid')
-  const [contentType, setContentType] = useState<'all' | 'comic' | 'video'>(
-    'all',
-  )
+  const search = useSearch({
+    from: '/content/',
+  })
+
+  const viewMode = (search.view ?? 'grid') as 'list' | 'grid'
+  const modeType = (search.mode ?? 'reading') as 'reading' | 'watching'
+
   const { decrementCollectionCount } = useCollection()
   const { decrementAnalyticsCount } = useAnalytics()
   const { content, error, isLoading, deleteContent, isDeleting } = useContent()
@@ -36,10 +39,11 @@ export const ContentPage: React.FC = () => {
     null,
   )
 
-  const navigate = useNavigate()
+  const navigate = useNavigate({ from: '/content' })
+  const route = useNavigate()
 
   const handleView = (content: Content) => {
-    navigate({ to: `/content/${content.id}` })
+    route({ to: `/content/${content.id}` })
   }
 
   const handleEdit = (content: Content) => {
@@ -63,10 +67,21 @@ export const ContentPage: React.FC = () => {
     })
   }
 
-  const filteredContent =
-    contentType === 'all'
-      ? content
-      : content?.filter((item) => item.type === contentType)
+  const updateSearch = (
+    updates: Partial<{ view: 'list' | 'grid'; mode: 'reading' | 'watching' }>,
+  ) => {
+    startTransition(() => {
+      navigate({
+        search: (prev) => ({
+          ...prev,
+          ...updates,
+        }),
+        replace: true,
+      })
+    })
+  }
+
+  const filteredContent = content?.filter((item) => item.mode === modeType)
 
   if (error) {
     return (
@@ -88,20 +103,21 @@ export const ContentPage: React.FC = () => {
       <Paper bg={'transparent'} mb="lg" py="md">
         <Group justify="space-between">
           <SegmentedControl
-            value={contentType}
+            value={modeType}
             onChange={(value) =>
-              setContentType(value as 'all' | 'comic' | 'video')
+              updateSearch({ mode: value as 'reading' | 'watching' })
             }
             data={[
-              { label: 'All Content', value: 'all' },
-              { label: 'Comics', value: 'comic' },
-              { label: 'Videos', value: 'video' },
+              { label: 'Flex', value: 'reading' },
+              { label: 'Movie', value: 'watching' },
             ]}
           />
 
           <SegmentedControl
             value={viewMode}
-            onChange={(value) => setViewMode(value as 'list' | 'grid')}
+            onChange={(value) =>
+              updateSearch({ view: value as 'list' | 'grid' })
+            }
             data={[
               { label: <IconList size={16} />, value: 'list' },
               { label: <IconGridDots size={16} />, value: 'grid' },

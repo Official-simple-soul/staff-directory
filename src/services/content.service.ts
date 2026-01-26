@@ -1,7 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { contentApi } from '@/api/content.api'
 import type { Content, Review } from '@/types/content.type'
 import { notifications } from '@mantine/notifications'
-import { contentApi } from '@/api/content.api'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 export const useContent = () => {
   const queryClient = useQueryClient()
@@ -13,12 +13,10 @@ export const useContent = () => {
     error,
     refetch,
   } = useQuery<Content[]>({
-    queryKey: ['content'],
+    queryKey: ['contents'],
     queryFn: contentApi.getContent,
     staleTime: 5 * 60 * 1000, // 5 minutes
   })
-
-  // Create content mutation
   const createContentMutation = useMutation({
     mutationFn: contentApi.createContent,
     onSuccess: (id) => {
@@ -48,7 +46,6 @@ export const useContent = () => {
     },
   })
 
-  // Delete content mutation
   const deleteContentMutation = useMutation({
     mutationFn: contentApi.deleteContent,
     onSuccess: () => {
@@ -68,14 +65,12 @@ export const useContent = () => {
     },
   })
 
-  // Get content by type
   const getContentByType = async (
     type: 'comic' | 'video',
   ): Promise<Content[]> => {
     return contentApi.getContentByType(type)
   }
 
-  // Get single content by ID
   const getContentById = (id: string) => {
     return useQuery<Content | null>({
       queryKey: ['content', id],

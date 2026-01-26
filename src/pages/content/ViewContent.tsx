@@ -1,47 +1,47 @@
-import DashboardLayout from '@/layout/DashboardLayout'
-import type { Content } from '@/types/content.type'
-import {
-  Paper,
-  Group,
-  Text,
-  Badge,
-  Image,
-  Progress,
-  Stack,
-  Grid,
-  Card,
-  Avatar,
-  Divider,
-  ActionIcon,
-  Menu,
-  Skeleton,
-  Center,
-} from '@mantine/core'
-import {
-  IconEye,
-  IconBook,
-  IconCalendar,
-  IconClock,
-  IconCrown,
-  IconDownload,
-  IconEdit,
-  IconTrash,
-  IconDotsVertical,
-  IconChecklist,
-  IconStar,
-  IconMessage,
-  IconUser,
-} from '@tabler/icons-react'
-import { useState } from 'react'
-import { colors, radius } from '@/theme/theme'
-import { format } from 'date-fns'
-import { useContent } from '@/services/content.service'
+import { AppButton } from '@/components/AppButton'
 import { Back } from '@/components/Back'
 import ActionModal from '@/components/modals/ActionModal'
-import { useCollection } from '@/services/collection.service'
+import DashboardLayout from '@/layout/DashboardLayout'
 import { useAnalytics } from '@/services/analytics.service'
+import { useCollection } from '@/services/collection.service'
+import { useContent } from '@/services/content.service'
+import { colors, radius } from '@/theme/theme'
+import type { Content } from '@/types/content.type'
+import {
+  ActionIcon,
+  Avatar,
+  Badge,
+  Card,
+  Center,
+  Divider,
+  Grid,
+  Group,
+  Image,
+  Menu,
+  Paper,
+  Progress,
+  Skeleton,
+  Stack,
+  Text,
+} from '@mantine/core'
+import {
+  IconBook,
+  IconCalendar,
+  IconChecklist,
+  IconClock,
+  IconCrown,
+  IconDotsVertical,
+  IconDownload,
+  IconEdit,
+  IconEye,
+  IconMessage,
+  IconStar,
+  IconTrash,
+  IconUser,
+} from '@tabler/icons-react'
 import { useNavigate } from '@tanstack/react-router'
-import { AppButton } from '@/components/AppButton'
+import { format } from 'date-fns'
+import { useState } from 'react'
 
 interface ViewContentProps {
   content: Content
@@ -64,10 +64,11 @@ function ViewContent({ contentId }: ViewContentProps) {
     contentId,
     5,
   )
+  const isReading = content?.mode === 'reading'
 
   const completionRate =
-    content?.totalReads! > 0
-      ? (content?.totalCompletions! / content?.totalReads!) * 100
+    content?.totalViews! > 0
+      ? (content?.totalCompletions! / content?.totalViews!) * 100
       : 0
 
   const formatDate = (timestamp: any) => {
@@ -79,11 +80,7 @@ function ViewContent({ contentId }: ViewContentProps) {
   }
 
   const handleDownload = () => {
-    if (content?.type === 'comic' && content?.pdf) {
-      window.open(content.pdf, '_blank')
-    } else if (content?.type === 'video' && content?.video) {
-      window.open(content?.video, '_blank')
-    }
+    window.open(content?.contentUrl, '_blank')
   }
 
   const handleEdit = () => {
@@ -123,7 +120,17 @@ function ViewContent({ contentId }: ViewContentProps) {
               The content you're looking for doesn't exist or may have been
               removed.
             </Text>
-            <AppButton onClick={() => navigate({ to: '/content' })}>
+            <AppButton
+              onClick={() =>
+                navigate({
+                  to: '/content',
+                  search: (prev) => ({
+                    view: prev.view as 'grid',
+                    mode: prev.mode as 'reading',
+                  }),
+                })
+              }
+            >
               Back to Content Library
             </AppButton>
           </div>
@@ -153,7 +160,7 @@ function ViewContent({ contentId }: ViewContentProps) {
               leftSection={<IconDownload size={16} />}
               onClick={handleDownload}
             >
-              Download {content?.type === 'comic' ? 'PDF' : 'Video'}
+              Download {isReading ? 'PDF' : 'Video'}
             </Menu.Item>
             <Menu.Divider />
             <Menu.Item
@@ -179,7 +186,7 @@ function ViewContent({ contentId }: ViewContentProps) {
                 <Grid.Col span={{ base: 12, md: 4 }}>
                   <div className="relative">
                     <Image
-                      src={content?.img}
+                      src={content?.thumbnail}
                       alt={content?.title}
                       radius="md"
                       className={`transition-opacity duration-300 ${
@@ -213,7 +220,7 @@ function ViewContent({ contentId }: ViewContentProps) {
                       </Text>
                     </div>
                     <Text size="sm" className="text-text leading-relaxed">
-                      {content?.preview}
+                      {content?.synopsis}
                     </Text>
                     <Group gap="xs">
                       {content?.genre.map((genre, index) => (
@@ -246,16 +253,16 @@ function ViewContent({ contentId }: ViewContentProps) {
                       </Badge>
                       <Badge
                         variant="light"
-                        color={content?.type === 'comic' ? 'blue' : 'purple'}
+                        color={isReading ? 'blue' : 'purple'}
                         leftSection={
-                          content?.type === 'comic' ? (
+                          isReading ? (
                             <IconBook size={14} />
                           ) : (
                             <IconCalendar size={14} />
                           )
                         }
                       >
-                        {content?.type}
+                        {content?.mode}
                       </Badge>
                     </Group>
                     <Divider />
@@ -273,7 +280,7 @@ function ViewContent({ contentId }: ViewContentProps) {
                           Pages
                         </Text>
                         <Text size="sm" c="dimmed">
-                          {content?.pages} pages
+                          {content?.length} pages
                         </Text>
                       </div>
                       <div>
@@ -281,15 +288,15 @@ function ViewContent({ contentId }: ViewContentProps) {
                           Uploaded
                         </Text>
                         <Text size="sm" c="dimmed">
-                          {formatDate(content?.uploaded)}
+                          {formatDate(content?.uploadedAt)}
                         </Text>
                       </div>
                     </Group>
-                    {content?.schedule && (
+                    {content?.scheduledDate && (
                       <Group gap="sm">
                         <IconCalendar size={16} className="text-primary" />
                         <Text size="sm" c="dimmed">
-                          Scheduled for: {formatDate(content?.schedule)}
+                          Scheduled for: {formatDate(content?.scheduledDate)}
                         </Text>
                       </Group>
                     )}
@@ -417,7 +424,7 @@ function ViewContent({ contentId }: ViewContentProps) {
                     </div>
                   </Group>
                   <Text size="lg" fw={700} className="text-primary">
-                    {content?.viewIds?.length || 0}
+                    {content?.viewerIds?.length || 0}
                   </Text>
                 </Group>
                 <Group justify="space-between">
@@ -427,15 +434,15 @@ function ViewContent({ contentId }: ViewContentProps) {
                     </Avatar>
                     <div>
                       <Text size="sm" fw={500}>
-                        Total Reads
+                        Total Views
                       </Text>
                       <Text size="xs" c="dimmed">
-                        All readers
+                        All viewers
                       </Text>
                     </div>
                   </Group>
                   <Text size="lg" fw={700} className="text-primary">
-                    {content?.totalReads}
+                    {content?.totalViews}
                   </Text>
                 </Group>
                 <Group justify="space-between">
@@ -448,7 +455,7 @@ function ViewContent({ contentId }: ViewContentProps) {
                         Completions
                       </Text>
                       <Text size="xs" c="dimmed">
-                        Finished reading
+                        Finished
                       </Text>
                     </div>
                   </Group>
@@ -542,7 +549,7 @@ function ViewContent({ contentId }: ViewContentProps) {
                   fullWidth
                   onClick={handleDownload}
                 >
-                  Download {content?.type === 'comic' ? 'PDF' : 'Video'}
+                  Download {isReading ? 'PDF' : 'Video'}
                 </AppButton>
                 <AppButton
                   variant="light"

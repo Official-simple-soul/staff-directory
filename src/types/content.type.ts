@@ -1,34 +1,34 @@
 import { Timestamp } from 'firebase/firestore'
 
-export interface Content {
-  id?: string
-  author: string
-  collection: string
-  collectionId: string
-  collectionNum: number
-  genre: string[]
-  img: string
-  key?: string
-  num?: number
-  package: 'free' | 'premium'
-  pages: number
-  pdf?: string
-  video?: string
-  preview: string
-  rating: number
-  reviews: number
-  schedule: Timestamp | null
-  status: 'draft' | 'published'
-  tag: string
-  title: string
-  totalCompletions: number
-  totalReads: number
-  totalViews: number
-  type: 'comic' | 'video'
-  uploaded?: Timestamp
-  view: number
-  viewIds: string[]
-}
+// export interface Content {
+//   id?: string
+//   author: string
+//   collection: string
+//   collectionId: string
+//   collectionNum: number
+//   genre: string[]
+//   img: string
+//   key?: string
+//   num?: number
+//   package: 'free' | 'premium'
+//   pages: number
+//   pdf?: string
+//   video?: string
+//   preview: string
+//   rating: number
+//   reviews: number
+//   schedule: Timestamp | null
+//   status: 'draft' | 'published'
+//   tag: string
+//   title: string
+//   totalCompletions: number
+//   totalReads: number
+//   totalViews: number
+//   categoryId: string
+//   uploaded?: Timestamp
+//   view: number
+//   viewIds: string[]
+// }
 
 export interface CreateContentDTO
   extends Omit<
@@ -50,6 +50,7 @@ export interface CreateContentDTO
   viewIds?: string[]
   rating?: number
   reviews?: number
+  scheduledDate?: string
 }
 
 export interface Review {
@@ -58,4 +59,60 @@ export interface Review {
   rating: number
   reviewText: string
   reviewer: string
+}
+
+export interface Content {
+  id?: string
+  title: string
+  description?: string
+  collectionId: string
+  collection: string
+  collectionNum: number
+  author: string
+  genre: string[]
+  tagLine: string
+  length: number
+  key: string
+  mode: 'reading' | 'watching'
+  num: number
+  synopsis: string
+  thumbnail: string
+  rating: number
+  reviews: number
+  totalRatings: number
+  totalViews: number
+  totalCompletions: number
+  status: 'draft' | 'published' | 'archived'
+  scheduledDate?: string
+  package: 'free' | 'premium' | 'subscription'
+  categoryId: string
+  categoryName: string
+  contentUrl: string
+  uploadedAt: Timestamp
+  updatedAt: Timestamp
+  publishedAt?: Timestamp
+  metadata?: Record<string, any>
+  viewerIds: string[]
+}
+
+export interface Collection {
+  id?: string
+  author: string
+  count: number
+  createdAt: Timestamp
+  genre: string[]
+  name: string
+  type: string
+  mode: 'reading' | 'watching'
+}
+
+export interface ContentProgress {
+  id: string
+  length: number
+  position: number
+  status: 'in_progress' | 'completed'
+  completions?: number
+  lastRead?: any
+  content?: Content | null
+  mode: 'reading' | 'watching'
 }
