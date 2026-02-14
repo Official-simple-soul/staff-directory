@@ -20,6 +20,7 @@ import { Route as DemoTanstackQueryRouteImport } from './routes/demo.tanstack-qu
 import { Route as ContentNewContentRouteImport } from './routes/content/new-content'
 import { Route as ContentContentIdRouteImport } from './routes/content/$contentId'
 import { Route as BlogsBlogIdRouteImport } from './routes/blogs/$blogId'
+import { Route as UsersManageIndexRouteImport } from './routes/users/manage/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -76,6 +77,11 @@ const BlogsBlogIdRoute = BlogsBlogIdRouteImport.update({
   path: '/blogs/$blogId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UsersManageIndexRoute = UsersManageIndexRouteImport.update({
+  id: '/users/manage/',
+  path: '/users/manage/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardIndexRoute
   '/employee': typeof EmployeeIndexRoute
   '/users': typeof UsersIndexRoute
+  '/users/manage': typeof UsersManageIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardIndexRoute
   '/employee': typeof EmployeeIndexRoute
   '/users': typeof UsersIndexRoute
+  '/users/manage': typeof UsersManageIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -116,6 +124,7 @@ export interface FileRoutesById {
   '/dashboard/': typeof DashboardIndexRoute
   '/employee/': typeof EmployeeIndexRoute
   '/users/': typeof UsersIndexRoute
+  '/users/manage/': typeof UsersManageIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -131,6 +140,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/employee'
     | '/users'
+    | '/users/manage'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/employee'
     | '/users'
+    | '/users/manage'
   id:
     | '__root__'
     | '/'
@@ -157,6 +168,7 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/employee/'
     | '/users/'
+    | '/users/manage/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -171,6 +183,7 @@ export interface RootRouteChildren {
   DashboardIndexRoute: typeof DashboardIndexRoute
   EmployeeIndexRoute: typeof EmployeeIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
+  UsersManageIndexRoute: typeof UsersManageIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -252,6 +265,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogsBlogIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/users/manage/': {
+      id: '/users/manage/'
+      path: '/users/manage'
+      fullPath: '/users/manage'
+      preLoaderRoute: typeof UsersManageIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -267,6 +287,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardIndexRoute: DashboardIndexRoute,
   EmployeeIndexRoute: EmployeeIndexRoute,
   UsersIndexRoute: UsersIndexRoute,
+  UsersManageIndexRoute: UsersManageIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

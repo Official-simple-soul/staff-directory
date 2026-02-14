@@ -1,31 +1,32 @@
-import React, { useState } from 'react'
+import { AppButton } from '@/components/AppButton'
+import { EmptyState } from '@/components/EmptyState'
+import ActionModal from '@/components/modals/ActionModal'
+import PageHeader from '@/components/PageHeader'
+import DashboardLayout from '@/layout/DashboardLayout'
+import { useUser } from '@/services/user.service'
+import { colors } from '@/theme/theme'
+import type { User } from '@/types/user.type'
+import { safeToDate } from '@/utils/helper'
 import {
+  Card,
+  Center,
   Grid,
   Group,
   Paper,
+  SegmentedControl,
   Skeleton,
   Text,
-  SegmentedControl,
-  Card,
-  Center,
 } from '@mantine/core'
 import {
-  IconList,
   IconGridDots,
+  IconList,
   IconTrash,
   IconUsers,
 } from '@tabler/icons-react'
-import type { User } from '@/types/user.type'
+import { useNavigate } from '@tanstack/react-router'
+import React, { useState } from 'react'
 import UserCard from './components/UserCard'
 import UserList from './components/UserList'
-import { useNavigate } from '@tanstack/react-router'
-import PageHeader from '@/components/PageHeader'
-import { EmptyState } from '@/components/EmptyState'
-import { useUser } from '@/services/user.service'
-import ActionModal from '@/components/modals/ActionModal'
-import { colors } from '@/theme/theme'
-import { safeToDate } from '@/utils/helper'
-import DashboardLayout from '@/layout/DashboardLayout'
 
 const isUserActive = (user: User): boolean => {
   const lastLoginDate = safeToDate(user.lastLogin)
@@ -37,11 +38,17 @@ const isUserActive = (user: User): boolean => {
   return lastLoginDate.getTime() > thirtyDaysAgo.getTime()
 }
 
+type UserTypeFilter =
+  | 'all'
+  | 'active'
+  | 'inactive'
+  | 'admin'
+  | 'moderator'
+  | 'creator'
+
 export const UsersPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('grid')
-  const [userType, setUserType] = useState<
-    'all' | 'active' | 'inactive' | 'admin' | 'moderator'
-  >('all')
+  const [userType, setUserType] = useState<UserTypeFilter>('all')
   const { users, error, isLoading, isDeleting } = useUser()
   const [userIdToDelete, setUserIdToDelete] = useState<string | null>(null)
   const navigate = useNavigate()
@@ -69,6 +76,8 @@ export const UsersPage: React.FC = () => {
         return user.role?.toLowerCase() === 'admin'
       case 'moderator':
         return user.role?.toLowerCase() === 'moderator'
+      case 'creator':
+        return user.role?.toLowerCase() === 'creator'
       case 'active':
         return isUserActive(user)
       case 'inactive':
@@ -98,7 +107,15 @@ export const UsersPage: React.FC = () => {
           <SegmentedControl
             value={userType}
             onChange={(value) =>
-              setUserType(value as 'all' | 'active' | 'inactive')
+              setUserType(
+                value as
+                  | 'all'
+                  | 'active'
+                  | 'inactive'
+                  | 'creator'
+                  | 'admin'
+                  | 'moderator',
+              )
             }
             data={[
               { label: 'All Users', value: 'all' },
@@ -106,6 +123,7 @@ export const UsersPage: React.FC = () => {
               { label: 'Inactive Users', value: 'inactive' },
               { label: 'Moderator', value: 'moderator' },
               { label: 'Admin', value: 'admin' },
+              { label: 'Creator', value: 'creator' },
             ]}
           />
 
@@ -183,11 +201,15 @@ export const UsersPage: React.FC = () => {
                 ? `No ${userType} users match your criteria.`
                 : 'Get started by adding your first user.'
             }
-            // action={
-            //   <AppButton onClick={() => navigate({ to: '/users' })}>
-            //     Add New User
-            //   </AppButton>
-            // }
+            action={
+              <AppButton
+                onClick={() =>
+                  navigate({ to: `/users/manage?type=${userType}` })
+                }
+              >
+                Add New User
+              </AppButton>
+            }
           />
         </Center>
       )}

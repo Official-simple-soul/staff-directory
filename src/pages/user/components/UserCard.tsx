@@ -1,27 +1,27 @@
+import { colors } from '@/theme/theme'
+import type { User } from '@/types/user.type'
+import { safeToDate } from '@/utils/helper'
 import {
-  Card,
-  Group,
-  Text,
+  ActionIcon,
   Avatar,
   Badge,
-  ActionIcon,
+  Card,
+  Group,
   Menu,
   Stack,
+  Text,
 } from '@mantine/core'
 import {
-  IconEdit,
-  IconTrash,
-  IconEye,
-  IconDotsVertical,
-  IconCrown,
   IconCoin,
-  IconWorld,
+  IconCrown,
+  IconDotsVertical,
+  IconEdit,
+  IconEye,
+  IconTrash,
   IconUser,
+  IconWorld,
 } from '@tabler/icons-react'
-import type { User } from '@/types/user.type'
-import { colors } from '@/theme/theme'
 import { format } from 'date-fns'
-import { safeToDate } from '@/utils/helper'
 
 interface UserCardProps {
   user: User
@@ -81,11 +81,11 @@ const UserCard: React.FC<UserCardProps> = ({
           <Group gap="sm" mt={4}>
             <Badge
               variant="light"
-              color={getPackageColor(user.packageSub)}
+              color={getPackageColor(user.subscription?.plan || '')}
               leftSection={<IconCrown size={12} />}
               size="sm"
             >
-              {user.packageSub}
+              {user.subscription?.plan || 'None'}
             </Badge>
           </Group>
         </div>
@@ -175,16 +175,23 @@ const UserCard: React.FC<UserCardProps> = ({
           </Text>
         </Group>
 
-        <Group justify="space-between" mt={4}>
+        {/* <Group justify="space-between" mt={4}>
           <Text size="xs" c="dimmed">
-            Subscription expires
+            Subscription expiry
           </Text>
-          <Text size="xs" fw={500} c={getPackageColor(user.packageSub)}>
-            {user?.subExpiry
-              ? format(new Date(user.subExpiry), 'MMM dd, yyyy')
-              : 'Never subscribed'}
+          <Text
+            size="xs"
+            fw={500}
+            c={getPackageColor(user.subscription?.plan || '')}
+          >
+            {user?.subscription?.nextPaymentDate
+              ? format(
+                  new Date(user.subscription.nextPaymentDate),
+                  'MMM dd, yyyy',
+                )
+              : '-'}
           </Text>
-        </Group>
+        </Group> */}
       </div>
     </Card>
   )

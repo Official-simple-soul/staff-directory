@@ -1,5 +1,8 @@
 import { Timestamp } from 'firebase/firestore'
+import type { UserSubscription } from './subscription.type'
 
+export type UserRole = 'admin' | 'user' | 'moderator'
+export type UserStatus = 'active' | 'inactive'
 export interface User {
   id: string
   auth_url: string
@@ -18,11 +21,10 @@ export interface User {
   photoURL: string
   push_token: string
   referral_code: string
-  role: 'admin' | 'user' | 'moderator'
+  role: UserRole
+  streak: UserStreak
   streaks: number
-  subDate: string
-  subExpiry: string
-  subscription_code: string
+  subscription: UserSubscription
   createdAt?: Timestamp
   updatedAt?: Timestamp
   isActive?: boolean
@@ -38,3 +40,8 @@ export interface CreateUserDTO
 }
 
 export interface UpdateUserDTO extends Partial<Omit<User, 'id'>> {}
+
+export interface UserStreak {
+  currentDay: number
+  lastClaimDate?: string
+}

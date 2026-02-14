@@ -183,7 +183,7 @@ function ViewContent({ contentId }: ViewContentProps) {
               className="bg-background/80 backdrop-blur-sm"
             >
               <Grid gutter="xl">
-                <Grid.Col span={{ base: 12, md: 4 }}>
+                {/* <Grid.Col span={{ base: 12, md: 4 }}>
                   <div className="relative">
                     <Image
                       src={content?.thumbnail}
@@ -207,6 +207,43 @@ function ViewContent({ contentId }: ViewContentProps) {
                       {content?.package}
                     </Badge>
                   </div>
+                </Grid.Col> */}
+                <Grid.Col span={{ base: 12, md: 4 }}>
+                  {isReading ? (
+                    <div className="relative">
+                      <Image
+                        src={content?.thumbnail}
+                        alt={content?.title}
+                        radius="md"
+                        className={`transition-opacity duration-300 ${
+                          imageLoaded ? 'opacity-100' : 'opacity-0'
+                        }`}
+                        onLoad={() => setImageLoaded(true)}
+                        fallbackSrc="https://placehold.co/300x400?text=Cover+Image"
+                      />
+                      {!imageLoaded && (
+                        <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-md" />
+                      )}
+                      <Badge
+                        color={colors.primary}
+                        variant="filled"
+                        className="absolute top-2 right-2"
+                        leftSection={<IconCrown size={14} />}
+                      >
+                        {content?.package}
+                      </Badge>
+                    </div>
+                  ) : (
+                    <Paper radius="md" withBorder className="overflow-hidden">
+                      <video
+                        src={content?.contentUrl}
+                        controls
+                        preload="metadata"
+                        poster={content?.thumbnail}
+                        className="w-full h-full rounded-md"
+                      />
+                    </Paper>
+                  )}
                 </Grid.Col>
 
                 <Grid.Col span={{ base: 12, md: 8 }}>
