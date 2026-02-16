@@ -9,6 +9,7 @@ export interface Category {
 }
 
 export interface CreateCategoryDTO {
+  id: string
   name: string
   icon: string
   mode: string

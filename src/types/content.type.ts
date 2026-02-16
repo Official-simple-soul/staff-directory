@@ -33,7 +33,6 @@ import { Timestamp } from 'firebase/firestore'
 export interface CreateContentDTO
   extends Omit<
     Content,
-    | 'id'
     | 'totalCompletions'
     | 'totalReads'
     | 'totalViews'
@@ -62,7 +61,7 @@ export interface Review {
 }
 
 export interface Content {
-  id?: string
+  id: string
   title: string
   description?: string
   collectionId: string

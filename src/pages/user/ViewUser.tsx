@@ -1,37 +1,37 @@
-import DashboardLayout from '@/layout/DashboardLayout'
-import type { User } from '@/types/user.type'
-import {
-  Paper,
-  Group,
-  Text,
-  Avatar,
-  Badge,
-  Stack,
-  Grid,
-  Card,
-  Divider,
-  Modal,
-  Select,
-} from '@mantine/core'
-import {
-  IconCrown,
-  IconCoin,
-  IconWorld,
-  IconUser,
-  IconMail,
-  IconPhone,
-  IconEdit,
-  IconShield,
-  IconChartBar,
-} from '@tabler/icons-react'
-import { colors, radius } from '@/theme/theme'
-import { format } from 'date-fns'
-import { safeToDate } from '@/utils/helper'
-import { useState } from 'react'
 import { AppButton } from '@/components/AppButton'
 import { Back } from '@/components/Back'
+import DashboardLayout from '@/layout/DashboardLayout'
 import { useUser } from '@/services/user.service'
+import { colors, radius } from '@/theme/theme'
+import type { User } from '@/types/user.type'
+import { safeToDate } from '@/utils/helper'
+import {
+  Avatar,
+  Badge,
+  Card,
+  Divider,
+  Grid,
+  Group,
+  Modal,
+  Paper,
+  Select,
+  Stack,
+  Text,
+} from '@mantine/core'
+import {
+  IconChartBar,
+  IconCoin,
+  IconCrown,
+  IconEdit,
+  IconMail,
+  IconPhone,
+  IconShield,
+  IconUser,
+  IconWorld,
+} from '@tabler/icons-react'
 import { useNavigate } from '@tanstack/react-router'
+import { format } from 'date-fns'
+import { useState } from 'react'
 
 interface ViewUserProps {
   user: User | null
@@ -43,8 +43,8 @@ function ViewUser({ user }: ViewUserProps) {
   const [selectedRole, setSelectedRole] = useState(user?.role || 'user')
   const { updateUser, isUpdating } = useUser()
   const lastLoginDate = safeToDate(user?.lastLogin)
-  const joinDate = safeToDate(user?.createdAt) || safeToDate(user?.subDate)
-  const subscriptionExpiry = safeToDate(user?.subExpiry)
+  const joinDate = safeToDate(user?.createdAt)
+  const subscriptionExpiry = safeToDate(user?.subscription?.nextPaymentDate)
   const navigate = useNavigate()
 
   const isActive = lastLoginDate
@@ -247,7 +247,7 @@ function ViewUser({ user }: ViewUserProps) {
                       className="mx-auto mb-2"
                     />
                     <Text fw={700} size="xl" c={colors.primary}>
-                      {user.streaks || 0}
+                      {user.streak.currentDay || 0}
                     </Text>
                     <Text size="sm" c="dimmed">
                       Login Streaks
@@ -281,7 +281,7 @@ function ViewUser({ user }: ViewUserProps) {
                     Subscription Code
                   </Text>
                   <Text size="sm" fw={500} className="text-text">
-                    {user.subscription_code || 'N/A'}
+                    {user.subscription.plan || 'N/A'}
                   </Text>
                 </Group>
 

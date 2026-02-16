@@ -1,7 +1,6 @@
 import { db, storage } from '@/lib/firebase'
 import type { Content, CreateContentDTO, Review } from '@/types/content.type'
 import {
-  addDoc,
   collection,
   deleteDoc,
   doc,
@@ -11,6 +10,7 @@ import {
   orderBy,
   query,
   QueryDocumentSnapshot,
+  setDoc,
   updateDoc,
   where,
   type DocumentData,
@@ -117,9 +117,9 @@ export const contentApi = {
     return docSnap.exists() ? (docSnap.data() as Content) : null
   },
 
-  async createContent(content: CreateContentDTO): Promise<string> {
-    const docRef = await addDoc(collection(db, tableName), content)
-    return docRef.id
+  async createContent(contentData: CreateContentDTO): Promise<void> {
+    const docRef = doc(db, tableName, contentData.id)
+    await setDoc(docRef, contentData)
   },
 
   async updateContent(id: string, content: Partial<Content>): Promise<void> {

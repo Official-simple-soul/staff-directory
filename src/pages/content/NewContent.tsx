@@ -1,4 +1,3 @@
-// Updated NewContent component with category implementation
 import { AppButton } from '@/components/AppButton'
 import ActionModal from '@/components/modals/ActionModal'
 import { CreateCollectionModal } from '@/components/modals/CreateCollectionModal'
@@ -57,7 +56,7 @@ import {
 } from '@tabler/icons-react'
 import { useNavigate } from '@tanstack/react-router'
 import { Timestamp } from 'firebase/firestore'
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 
 interface CreateContentModalProps {
   contentToEdit?: Content | null
@@ -296,6 +295,7 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
       const categoryId = name.toLowerCase().replace(/\s+/g, '-')
 
       await createCategory({
+        id: categoryId,
         name,
         icon,
         mode: contentType,
@@ -394,14 +394,14 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
       let mediaUrl = contentToEdit?.contentUrl || ''
 
       if (coverImage) {
-        const coverImagePath = `comic-images/${values.title.replace(/\s+/g, '_')}${values.collectionNum}`
+        const coverImagePath = `contents/thumbnail/${values.title.replace(/\s+/g, '_')}${values.collectionNum}`
         imgUrl = await uploadFileToStorage(coverImage, coverImagePath)
       }
 
       if (mediaFile) {
         const mediaPath = isReading
-          ? `comics-pdf/${values.title.replace(/\s+/g, '_')}${values.collectionNum}`
-          : `videos/${values.title.replace(/\s+/g, '_')}${values.collectionNum}`
+          ? `contents/pdf/${values.title.replace(/\s+/g, '_')}${values.collectionNum}`
+          : `contents/video/${values.title.replace(/\s+/g, '_')}${values.collectionNum}`
         mediaUrl = await uploadFileToStorage(mediaFile, mediaPath)
       }
 
@@ -421,6 +421,7 @@ function NewContent({ contentToEdit }: CreateContentModalProps) {
       } else {
         const contentData = {
           ...values,
+          id: `${values.categoryId}-${useId()}`,
           type: contentType,
           thumbnail: imgUrl,
           contentUrl: mediaUrl,

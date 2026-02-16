@@ -1,19 +1,19 @@
+import { db } from '@/lib/firebase'
+import type { UpdateUserDTO, User } from '@/types/user.type'
 import {
   collection,
-  updateDoc,
-  doc,
   deleteDoc,
-  getDocs,
+  doc,
   getDoc,
-  query,
-  where,
+  getDocs,
   orderBy,
+  query,
   QueryDocumentSnapshot,
+  updateDoc,
+  where,
   type DocumentData,
   type SnapshotOptions,
 } from 'firebase/firestore'
-import { db } from '@/lib/firebase'
-import type { User, UpdateUserDTO } from '@/types/user.type'
 
 const userConverter = {
   toFirestore(user: User): DocumentData {
@@ -35,10 +35,8 @@ const userConverter = {
       push_token: user.push_token,
       referral_code: user.referral_code,
       role: user.role,
-      streaks: user.streaks,
-      subDate: user.subDate,
-      subExpiry: user.subExpiry,
-      subscription_code: user.subscription_code,
+      streak: user.streak,
+      subscription: user.subscription,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
       isActive: user.isActive,
@@ -69,10 +67,8 @@ const userConverter = {
       push_token: data.push_token,
       referral_code: data.referral_code,
       role: data.role,
-      streaks: data.streaks,
-      subDate: data.subDate,
-      subExpiry: data.subExpiry,
-      subscription_code: data.subscription_code,
+      streak: data.streak,
+      subscription: data.subscription,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
       isActive: data.isActive,

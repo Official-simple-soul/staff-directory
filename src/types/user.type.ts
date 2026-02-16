@@ -23,7 +23,6 @@ export interface User {
   referral_code: string
   role: UserRole
   streak: UserStreak
-  streaks: number
   subscription: UserSubscription
   createdAt?: Timestamp
   updatedAt?: Timestamp

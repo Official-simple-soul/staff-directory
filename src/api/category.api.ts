@@ -5,7 +5,6 @@ import type {
   UpdateCategoryDTO,
 } from '@/types/category.type'
 import {
-  addDoc,
   collection,
   deleteDoc,
   doc,
@@ -14,14 +13,17 @@ import {
   orderBy,
   query,
   serverTimestamp,
+  setDoc,
   updateDoc,
   where,
   type DocumentData,
 } from 'firebase/firestore'
 
+const tableName = 'categories'
+
 export const categoryApi = {
   async getCategories(): Promise<Category[]> {
-    const q = query(collection(db, 'categories'), orderBy('createdAt', 'desc'))
+    const q = query(collection(db, tableName), orderBy('createdAt', 'desc'))
 
     const querySnapshot = await getDocs(q)
     return querySnapshot.docs.map((doc) => doc.data() as Category)
@@ -29,7 +31,7 @@ export const categoryApi = {
 
   async getCategoriesByMode(mode: string): Promise<Category[]> {
     const q = query(
-      collection(db, 'categories'),
+      collection(db, tableName),
       where('mode', '==', mode),
       orderBy('createdAt', 'desc'),
     )
@@ -39,28 +41,32 @@ export const categoryApi = {
   },
 
   async getCategoryById(id: string): Promise<Category | null> {
-    const docRef = doc(db, 'categories', id)
+    const docRef = doc(db, tableName, id)
     const docSnap = await getDoc(docRef)
     return docSnap.exists() ? (docSnap.data() as Category) : null
   },
 
   async getCategoryByName(name: string): Promise<Category | null> {
-    const q = query(collection(db, 'categories'), where('name', '==', name))
+    const q = query(collection(db, tableName), where('name', '==', name))
 
     const querySnapshot = await getDocs(q)
     return (querySnapshot.docs[0]?.data() as Category) || null
   },
 
-  async createCategory(categoryData: CreateCategoryDTO): Promise<string> {
-    const docRef = await addDoc(collection(db, 'categories'), categoryData)
-    return docRef.id
+  async createCategory(categoryData: CreateCategoryDTO): Promise<void> {
+    const docRef = doc(db, tableName, categoryData.id)
+
+    await setDoc(docRef, {
+      ...categoryData,
+      createdAt: serverTimestamp(),
+    })
   },
 
   async updateCategory(
     id: string,
     categoryData: UpdateCategoryDTO,
   ): Promise<void> {
-    const docRef = doc(db, 'categories', id)
+    const docRef = doc(db, tableName, id)
     await updateDoc(docRef, {
       ...categoryData,
       updatedAt: serverTimestamp(),
@@ -68,6 +74,6 @@ export const categoryApi = {
   },
 
   async deleteCategory(id: string): Promise<void> {
-    await deleteDoc(doc(db, 'categories', id))
+    await deleteDoc(doc(db, tableName, id))
   },
 }
